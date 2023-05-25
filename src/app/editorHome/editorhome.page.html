@@ -1,0 +1,37 @@
+<app-header title="Pick a deck"></app-header>
+<ion-content fullscreen="true">
+	<div class="cardList">
+		<!-- Cartes plus -->
+		<ion-card (click)="newDeck()"
+			class="cardplus">
+			<ion-card-header>
+				<ion-card-title size="large">New</ion-card-title>
+			</ion-card-header>
+			<ion-card-content>
+				<ion-icon [name]="'add'"></ion-icon>
+			</ion-card-content>
+		</ion-card>
+		<!-- Cartes -->
+		<ion-card *ngFor="let d of descriptors"
+			(click)="loadDeck(d)"
+			(contextmenu)="contextOwn($event,d)"
+			class="basicCard">
+			<ion-card-header>
+				<ion-card-title size="large">{{d.title}}</ion-card-title>
+			</ion-card-header>
+			<ion-card-content>
+				<ion-text>{{d.description}}</ion-text>
+				<ion-item>
+					<ion-img [src]="d.icon"></ion-img>
+				</ion-item>
+			</ion-card-content>
+			<ion-button (click)="contextOwn($event,d)"
+				size="small"
+				class="menuCardBtn">
+				<ion-icon slot="icon-only"
+					ios="ellipsis-horizontal"
+					md="ellipsis-vertical"></ion-icon>
+			</ion-button>
+		</ion-card>
+	</div>
+</ion-content>

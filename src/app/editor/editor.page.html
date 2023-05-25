@@ -1,0 +1,31 @@
+<app-header title="Edit your Deck"></app-header>
+<ion-content fullscreen="true">
+	<ion-card class="cardtitle">
+		<ion-grid>
+			<ion-row>
+				<ion-col size="3">
+					<ion-img [src]="deck.icon"></ion-img>
+				</ion-col>
+				<ion-col>
+					<ion-input [(ngModel)]="deck.title"
+						label="Title"
+						labelPlacement="stacked"
+						id="title"></ion-input>
+					<ion-input [(ngModel)]="deck.icon"
+						label="Icon"
+						labelPlacement="stacked"
+						id="icon"></ion-input>
+					<ion-input [ngModel]="deck.creator"
+						label="Creator"
+						labelPlacement="stacked"
+						readonly
+						id="title"></ion-input>
+					<ion-textarea [(ngModel)]="deck.description"
+						label="Description"
+						labelPlacement="stacked"
+						id="description"></ion-textarea>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</ion-card>
+</ion-content>

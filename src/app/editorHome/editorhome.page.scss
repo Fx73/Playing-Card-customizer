@@ -1,0 +1,57 @@
+@import '/src/theme/components.scss';
+
+.cardplus {
+  cursor: pointer;
+  display: grid;
+  align-items: center;
+  font-size: 3.8rem;
+  border: dashed 2px rgb(53, 53, 53);
+  ion-card-header {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    padding: 1px;
+    ion-card-title{
+      width: fit-content;
+      font-size: 0.6em;
+      color: grey;
+    }
+  }
+  ion-card-content{
+    padding: 1px;
+    ion-icon {
+      font-size: 4rem;
+      display: contents;
+      color:dimgrey;
+    }
+  }
+}
+
+.localCard{
+  ion-card-header{
+  ion-text{
+    text-align: left;
+    font-size: 0.6rem;
+    color: grey;
+    margin-left: -4px;
+  }}
+}
+
+.cardList{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content:flex-start;
+  ion-card{
+    max-width: 200px;
+    max-height: 300px;
+  }
+}
+
+
+ion-title {
+  display: contents;
+  text-align: center;
+}
+
+div.floating-menu {position:fixed;background:#fff4c8;border:1px solid #ffcc00;width:150px;z-index:100;top:44px;}

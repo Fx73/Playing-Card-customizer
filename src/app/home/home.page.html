@@ -1,0 +1,56 @@
+<app-header title="Playing Card Customizer"></app-header>
+<ion-content>
+	<ion-row>
+		<ion-col>
+			<h1>
+				Welcome to the Playing Card Customizer!
+			</h1>
+			<p>
+				Personalize your own deck of playing cards and make them truly unique.
+			</p>
+			<ion-button [routerLink]="['/selection-editor']"
+				expand="full"
+				class="start-button">
+				Go create some decks
+			</ion-button>
+		</ion-col>
+		<ion-col>
+			<div class="site-introduction">
+				<h2>What We Offer</h2>
+				<ul>
+					<li>
+						Customize the design of your playing cards
+					</li>
+					<li>
+						Add your own images, text, and graphics
+					</li>
+					<li>
+						Choose from various card sizes and materials
+					</li>
+					<li>
+						Preview and order your custom deck online
+					</li>
+				</ul>
+			</div>
+			<div class="examples">
+				<h2>
+					Examples of Customized Cards
+				</h2>
+				<div class="card-grid">
+					<!-- Afficher quelques exemples de cartes personnalisées -->
+					<div class="card-item">
+						<img src="path/to/custom-card-1.jpg"
+							alt="Custom Card 1">
+						<h3>Custom Card 1</h3>
+					</div>
+					<div class="card-item">
+						<img src="path/to/custom-card-2.jpg"
+							alt="Custom Card 2">
+						<h3>Custom Card 2</h3>
+					</div>
+					<!-- Ajoutez d'autres exemples de cartes personnalisées ici -->
+				</div>
+			</div>
+		</ion-col>
+	</ion-row>
+</ion-content>
