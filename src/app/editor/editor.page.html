@@ -1,31 +1,169 @@
 <app-header title="Edit your Deck"></app-header>
 <ion-content fullscreen="true">
-	<ion-card class="cardtitle">
-		<ion-grid>
-			<ion-row>
-				<ion-col size="3">
-					<ion-img [src]="deck.icon"></ion-img>
-				</ion-col>
-				<ion-col>
+	<ion-row>
+		<ion-col>
+			<!-- HEADER -->
+			<ion-card class="cardtitle">
+				<ion-card-header>
 					<ion-input [(ngModel)]="deck.title"
 						label="Title"
 						labelPlacement="stacked"
 						id="title"></ion-input>
-					<ion-input [(ngModel)]="deck.icon"
-						label="Icon"
-						labelPlacement="stacked"
-						id="icon"></ion-input>
-					<ion-input [ngModel]="deck.creator"
-						label="Creator"
-						labelPlacement="stacked"
-						readonly
-						id="title"></ion-input>
-					<ion-textarea [(ngModel)]="deck.description"
-						label="Description"
-						labelPlacement="stacked"
-						id="description"></ion-textarea>
+				</ion-card-header>
+				<ion-card-content>
+					<ion-grid>
+						<ion-row>
+							<ion-col size="3">
+								<ion-img [src]="deck.icon"></ion-img>
+							</ion-col>
+							<ion-col>
+								<ion-input [(ngModel)]="deck.icon"
+									label="Icon"
+									labelPlacement="stacked"
+									id="icon"></ion-input>
+								<ion-input [ngModel]="deck.creator"
+									label="Creator"
+									labelPlacement="stacked"
+									readonly
+									id="title"></ion-input>
+								<ion-textarea [(ngModel)]="deck.description"
+									label="Description"
+									labelPlacement="stacked"
+									id="description"></ion-textarea>
+							</ion-col>
+						</ion-row>
+					</ion-grid>
+				</ion-card-content>
+			</ion-card>
+		</ion-col>
+		<ion-col>
+			<!-- PROPRIETES DE BASE -->
+			<ion-card>
+				<ion-card-header>
+					<ion-card-title>Customize Deck</ion-card-title>
+				</ion-card-header>
+				<ion-card-content>
+					<ion-list>
+						<ion-item>
+							<ion-select [(ngModel)]="deck.format"
+								label="Format">
+								<ion-select-option *ngFor="let format of deckFormats"
+									[value]="format">
+									{{ format }}
+								</ion-select-option>
+							</ion-select>
+						</ion-item>
+						<ion-item>
+							<ion-toggle [(ngModel)]="deck.customizeColorIcon"
+								[enableOnOffLabels]="true">
+								Customize color icons
+							</ion-toggle>
+						</ion-item>
+						<ion-item>
+							<ion-label position="stacked">Border Color</ion-label>
+							<input [(colorPicker)]="deck.borderColor"
+								[style.background]="deck.borderColor">
+						</ion-item>
+						<ion-item>
+							<ion-label position="stacked">Black Card Color</ion-label>
+							<input [(colorPicker)]="deck.blackCardColor"
+								[style.background]="deck.blackCardColor">
+						</ion-item>
+						<ion-item>
+							<ion-label position="stacked">Red Card Color</ion-label>
+							<input [(colorPicker)]="deck.redCardColor"
+								[style.background]="deck.redCardColor">
+						</ion-item>
+					</ion-list>
+				</ion-card-content>
+			</ion-card>
+		</ion-col>
+	</ion-row>
+	<!-- Icon PICKERS -->
+	<ion-card *ngIf="deck.customizeColorIcon">
+		<ion-card-header>
+			<ion-card-title>Color Icon</ion-card-title>
+		</ion-card-header>
+		<ion-card-content>
+			<ion-row>
+				<ion-col *ngFor="let color of cardColors"
+					size="6">
+					<ion-item>
+						<ion-thumbnail slot="start">
+							<img [src]="getCardImage(color,'icon')">
+						</ion-thumbnail>
+						<ion-button (click)="pickImage(color, 'icon')"
+							expand="block">
+							{{color}}
+						</ion-button>
+					</ion-item>
 				</ion-col>
 			</ion-row>
-		</ion-grid>
+		</ion-card-content>
 	</ion-card>
+	<!-- IMAGES PICKERS -->
+	<ion-card>
+		<ion-card-header>
+			<ion-card-title>Cards</ion-card-title>
+		</ion-card-header>
+		<ion-card-content>
+			<ion-grid>
+				<ion-row>
+					<ion-col *ngFor="let color of cardColors"
+						size="6">
+						<ion-card>
+							<ion-card-header>
+								<ion-card-title>{{ color }}</ion-card-title>
+							</ion-card-header>
+							<ion-card-content>
+								<ion-grid>
+									<ion-row>
+										<ion-col *ngFor="let number of cardNumbers"
+											size="6">
+											<img [src]="getCardImage(color, number)"
+												alt="Card Preview"
+												class="card-preview-image">
+											<ion-button (click)="pickImage(color, number)"
+												expand="block">
+												{{number}}
+											</ion-button>
+										</ion-col>
+									</ion-row>
+								</ion-grid>
+							</ion-card-content>
+						</ion-card>
+					</ion-col>
+					<ion-col *ngIf="deck.format === 'Tarot'"
+						size="6">
+						<ion-card>
+							<ion-card-header>
+								<ion-card-title>Trump</ion-card-title>
+							</ion-card-header>
+							<ion-card-content>
+								<ion-grid>
+									<ion-row>
+										<ion-col *ngFor="let number of trumpNumbers"
+											size="6">
+											<img [src]="getCardTrumpImage(number)"
+												alt="Card Preview"
+												class="card-preview-image">
+											<ion-button (click)="pickTrumpImage(number)"
+												expand="block">
+												{{number}}
+											</ion-button>
+										</ion-col>
+									</ion-row>
+								</ion-grid>
+							</ion-card-content>
+						</ion-card>
+					</ion-col>
+				</ion-row>
+			</ion-grid>
+		</ion-card-content>
+	</ion-card>
+
+
+
+
+
 </ion-content>

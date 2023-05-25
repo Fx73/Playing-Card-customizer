@@ -1,4 +1,16 @@
 
+export enum DeckFormat {
+  Standard = 'Standard',
+  Tarot = 'Tarot',
+}
+
+export enum CardColor {
+  Spade = 'Spade',
+  Heart = 'Heart',
+  Diamond = 'Diamond',
+  Club = 'Club',
+}
+
 export class DeckDTO {
   id: string
   title: string
@@ -6,6 +18,31 @@ export class DeckDTO {
   icon: string
   creator: string
 
+  format: DeckFormat = DeckFormat.Standard
+  customizeColorIcon: boolean = false
+  borderColor: string = "white"
+  blackCardColor: string = "black"
+  redCardColor: string = "red"
+
+  images: {
+    [color in CardColor]: { [number: string]: string };
+  } = {
+      [CardColor.Spade]: {},
+      [CardColor.Heart]: {},
+      [CardColor.Diamond]: {},
+      [CardColor.Club]: {},
+    }
+
+  imagesTrump: { [number: string]: string } = {};
+
+  iconImages: {
+    [color in CardColor]: string;
+  } = {
+      [CardColor.Spade]: "",
+      [CardColor.Heart]: "",
+      [CardColor.Diamond]: "",
+      [CardColor.Club]: "",
+    }
 
   constructor() {
     this.id = "-1"
