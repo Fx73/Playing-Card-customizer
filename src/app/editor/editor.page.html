@@ -14,7 +14,7 @@
 					<ion-grid>
 						<ion-row>
 							<ion-col size="3">
-								<ion-img [src]="deck.icon"></ion-img>
+								<ion-img [src]="img"></ion-img>
 							</ion-col>
 							<ion-col>
 								<ion-input [(ngModel)]="deck.icon"
@@ -46,6 +46,7 @@
 					<ion-list>
 						<ion-item>
 							<ion-select [(ngModel)]="deck.format"
+								(ionChange)="refreshPreviews()"
 								label="Format">
 								<ion-select-option *ngFor="let format of deckFormats"
 									[value]="format">
@@ -54,25 +55,23 @@
 							</ion-select>
 						</ion-item>
 						<ion-item>
-							<ion-toggle [(ngModel)]="deck.customizeColorIcon"
-								[enableOnOffLabels]="true">
-								Customize color icons
+							<ion-toggle [(ngModel)]="deck.drawBorder"
+								[enableOnOffLabels]="true"
+								(ionChange)="refreshPreviews()">
+								Draw borders
 							</ion-toggle>
-						</ion-item>
-						<ion-item>
-							<ion-label position="stacked">Border Color</ion-label>
-							<input [(colorPicker)]="deck.borderColor"
-								[style.background]="deck.borderColor">
 						</ion-item>
 						<ion-item>
 							<ion-label position="stacked">Black Card Color</ion-label>
 							<input [(colorPicker)]="deck.blackCardColor"
-								[style.background]="deck.blackCardColor">
+								[style.background]="deck.blackCardColor"
+								(colorPickerClose)="refreshPreviews()">
 						</ion-item>
 						<ion-item>
 							<ion-label position="stacked">Red Card Color</ion-label>
 							<input [(colorPicker)]="deck.redCardColor"
-								[style.background]="deck.redCardColor">
+								[style.background]="deck.redCardColor"
+								(colorPickerClose)="refreshPreviews()">
 						</ion-item>
 					</ion-list>
 				</ion-card-content>
@@ -80,26 +79,32 @@
 		</ion-col>
 	</ion-row>
 	<!-- Icon PICKERS -->
-	<ion-card *ngIf="deck.customizeColorIcon">
-		<ion-card-header>
-			<ion-card-title>Color Icon</ion-card-title>
-		</ion-card-header>
-		<ion-card-content>
-			<ion-row>
-				<ion-col *ngFor="let color of cardColors"
-					size="6">
-					<ion-item>
-						<ion-thumbnail slot="start">
-							<img [src]="getCardImage(color,'icon')">
-						</ion-thumbnail>
-						<ion-button (click)="pickImage(color, 'icon')"
-							expand="block">
-							{{color}}
-						</ion-button>
-					</ion-item>
-				</ion-col>
-			</ion-row>
-		</ion-card-content>
+	<ion-card class="icon-card">
+		<ion-accordion-group>
+			<ion-accordion>
+				<ion-item slot="header"
+					color="light">
+					<ion-label>Color Icon</ion-label>
+				</ion-item>
+				<div class="ion-padding"
+					slot="content">
+					<ion-row>
+						<ion-col *ngFor="let color of cardColors"
+							size="6">
+							<ion-item>
+								<ion-thumbnail slot="start">
+									<img [src]="getCardImage(color,'icon')">
+								</ion-thumbnail>
+								<ion-button (click)="pickImage(color, 'icon')"
+									expand="block">
+									{{color}}
+								</ion-button>
+							</ion-item>
+						</ion-col>
+					</ion-row>
+				</div>
+			</ion-accordion>
+		</ion-accordion-group>
 	</ion-card>
 	<!-- IMAGES PICKERS -->
 	<ion-card>
@@ -120,9 +125,8 @@
 									<ion-row>
 										<ion-col *ngFor="let number of cardNumbers"
 											size="6">
-											<img [src]="getCardImage(color, number)"
-												alt="Card Preview"
-												class="card-preview-image">
+											<ion-img [src]="getCardImage(color, number)"
+												class="card-preview-image"></ion-img>
 											<ion-button (click)="pickImage(color, number)"
 												expand="block">
 												{{number}}
@@ -161,6 +165,35 @@
 			</ion-grid>
 		</ion-card-content>
 	</ion-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 
 export enum DeckFormat {
-  Standard = 'Standard',
+  Classic = 'Classic',
   Tarot = 'Tarot',
 }
 
@@ -12,15 +12,21 @@ export enum CardColor {
 }
 
 export class DeckDTO {
+  readonly colorMapping = {
+    [CardColor.Spade]: () => this.blackCardColor,
+    [CardColor.Heart]: () => this.redCardColor,
+    [CardColor.Diamond]: () => this.redCardColor,
+    [CardColor.Club]: () => this.blackCardColor,
+  };
+
   id: string
   title: string
   description: string
   icon: string
   creator: string
 
-  format: DeckFormat = DeckFormat.Standard
-  customizeColorIcon: boolean = false
-  borderColor: string = "white"
+  format: DeckFormat = DeckFormat.Classic
+  drawBorder: boolean = false
   blackCardColor: string = "black"
   redCardColor: string = "red"
 
