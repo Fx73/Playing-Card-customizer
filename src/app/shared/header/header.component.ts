@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IonicModule, PopoverController } from '@ionic/angular';
-import { NgClass, NgIf } from '@angular/common';
 
 import { RouterModule } from '@angular/router';
 import { UserComponent } from '../user/user.component';
@@ -10,7 +9,7 @@ import { UserComponent } from '../user/user.component';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   standalone: true,
-  imports: [IonicModule, RouterModule, NgIf, NgClass],
+  imports: [IonicModule, RouterModule, UserComponent]
 })
 export class HeaderComponent implements OnInit {
 
@@ -22,39 +21,8 @@ export class HeaderComponent implements OnInit {
   ngOnInit() { }
 
 
-  async presentPopover(e: Event) {
-    let popover: HTMLIonPopoverElement;
-    //TODO
-    if (false) {
-      popover = await this.popoverController.create({
-        component: UserComponent,
-        event: e,
-      });
-    } else {
-      popover = await this.popoverController.create({
-        component: NoUserPopoverComponent,
-        event: e,
-      });
-    }
 
-    await popover.present();
 
-    await popover.onDidDismiss();
-
-  }
 
 }
 
-
-@Component({
-  template: `<ion-content class="ion-padding">Go to homepage to log in</ion-content>`,
-  standalone: true,
-  imports: [IonicModule],
-})
-class NoUserPopoverComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() { }
-
-}

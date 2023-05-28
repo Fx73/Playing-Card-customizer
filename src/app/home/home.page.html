@@ -2,55 +2,77 @@
 <ion-content>
 	<ion-row>
 		<ion-col>
-			<h1>
-				Welcome to the Playing Card Customizer!
-			</h1>
-			<p>
-				Personalize your own deck of playing cards and make them truly unique.
-			</p>
-			<ion-button [routerLink]="['/selection-editor']"
-				expand="full"
-				class="start-button">
-				Go create some decks
-			</ion-button>
+			<ion-card>
+				<ion-card-header>
+					<ion-card-title>
+						Welcome to the Playing Card Customizer!
+					</ion-card-title>
+					<ion-card-subtitle>
+						Personalize your own deck of playing cards and make them truly unique.
+					</ion-card-subtitle>
+				</ion-card-header>
+				<ion-card-content>
+					<ion-button [routerLink]="['/editor']"
+						[disabled]="!isUserLoggedIn()"
+						expand="full"
+						class="start-button">
+						Go create some decks
+					</ion-button>
+				</ion-card-content>
+			</ion-card>
+			<div *ngIf="isUserLoggedIn(); then accountblock  else loginblock"></div>
+			<ng-template #loginblock>
+				<app-login></app-login>
+			</ng-template>
+			<ng-template #accountblock>
+				<app-account></app-account>
+			</ng-template>
 		</ion-col>
 		<ion-col>
-			<div class="site-introduction">
-				<h2>What We Offer</h2>
-				<ul>
-					<li>
-						Customize the design of your playing cards
-					</li>
-					<li>
-						Add your own images, text, and graphics
-					</li>
-					<li>
-						Choose from various card sizes and materials
-					</li>
-					<li>
-						Preview and order your custom deck online
-					</li>
-				</ul>
-			</div>
-			<div class="examples">
-				<h2>
-					Examples of Customized Cards
-				</h2>
-				<div class="card-grid">
-					<!-- Afficher quelques exemples de cartes personnalisées -->
-					<div class="card-item">
-						<img src="path/to/custom-card-1.jpg"
-							alt="Custom Card 1">
-						<h3>Custom Card 1</h3>
+			<ion-card class="site-introduction">
+				<ion-card-header>
+					<ion-card-title>What We Offer</ion-card-title>
+				</ion-card-header>
+				<ion-card-content>
+					<ul>
+						<li>
+							Customize the design of your playing cards
+						</li>
+						<li>
+							Add your own images, text, and graphics
+						</li>
+						<li>
+							Choose from various card sizes and materials
+						</li>
+						<li>
+							Preview and order your custom deck online
+						</li>
+					</ul>
+				</ion-card-content>
+			</ion-card>
+			<ion-card class="examples">
+				<ion-card-header>
+					<ion-card-title>
+						Examples of Customized Cards
+					</ion-card-title>
+				</ion-card-header>
+				<ion-card-content>
+					<div class="card-grid">
+						<!-- Afficher quelques exemples de cartes personnalisées -->
+						<div class="card-item">
+							<img src="assets/CustomCard.png"
+								alt="Custom Card 1">
+							<h3>Custom Card 1</h3>
+						</div>
+						<div class="card-item">
+							<img src="assets/CustomCard.png"
+								alt="Custom Card 2">
+							<h3>Custom Card 2</h3>
+						</div>
+						<!-- Ajoutez d'autres exemples de cartes personnalisées ici -->
 					</div>
-					<div class="card-item">
-						<img src="path/to/custom-card-2.jpg"
-							alt="Custom Card 2">
-						<h3>Custom Card 2</h3>
-					</div>
-					<!-- Ajoutez d'autres exemples de cartes personnalisées ici -->
-				</div>
-			</div>
+				</ion-card-content>
+			</ion-card>
 		</ion-col>
 	</ion-row>
 </ion-content>

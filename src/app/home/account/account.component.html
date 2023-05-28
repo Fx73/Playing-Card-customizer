@@ -1,0 +1,68 @@
+<ion-card *ngIf="user">
+	<ion-card-header>
+		<ion-card-title>Account</ion-card-title>
+	</ion-card-header>
+	<ion-card-content>
+		<ion-grid>
+			<ion-row>
+				<ion-col>
+					<ion-card>
+						<ion-item>
+							<ion-input [(ngModel)]="name"
+								name="name"
+								type="text"
+								placeholder="Name"
+								required></ion-input>
+						</ion-item>
+						<ion-item>
+							<ion-input [(ngModel)]="email"
+								name="email"
+								type="email"
+								placeholder="your@email.com"
+								required></ion-input>
+						</ion-item>
+						<ion-button (click)="saveProfile()"
+							expand="block">
+							Change personal informations
+						</ion-button>
+					</ion-card>
+				</ion-col>
+				<ion-col>
+					<ion-card>
+						<ion-item>
+							<ion-input [(ngModel)]="this.password"
+								name="password"
+								type="password"
+								placeholder="Password"
+								required></ion-input>
+						</ion-item>
+						<ion-item>
+							<ion-input [(ngModel)]="this.password2"
+								name="confirm"
+								type="password"
+								placeholder="Password again"
+								required></ion-input>
+						</ion-item>
+						<ion-button (click)="savePassword()"
+							expand="block">
+							Change password
+						</ion-button>
+					</ion-card>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+		<ion-card>
+			<ion-button [color]="emailVerified()?'success':'warning'"
+				[disabled]="emailVerified()"
+				(click)="resendEmail()"
+				expand="block">
+				{{emailVerified()?'Email verified':'Resend verification email'}}
+			</ion-button>
+			<ion-button (click)="logOut()"
+				color="tertiary"
+				expand="block">
+				Log Out
+			</ion-button>
+		</ion-card>
+	</ion-card-content>
+</ion-card>

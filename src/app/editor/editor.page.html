@@ -5,28 +5,29 @@
 			<!-- HEADER -->
 			<ion-card class="cardtitle">
 				<ion-card-header>
-					<ion-input [(ngModel)]="deck.title"
-						label="Title"
-						labelPlacement="stacked"
-						id="title"></ion-input>
+					<ion-card-title>Deck description</ion-card-title>
 				</ion-card-header>
 				<ion-card-content>
 					<ion-grid>
 						<ion-row>
 							<ion-col size="3">
-								<ion-img [src]="img"></ion-img>
+								<ion-img [src]="deckDescriptor.icon"
+									(click)="pickDeckImage()"></ion-img>
 							</ion-col>
 							<ion-col>
-								<ion-input [(ngModel)]="deck.icon"
-									label="Icon"
+								<ion-input [(ngModel)]="deckDescriptor.title"
+									(ionChange)="refreshDescriptor()"
+									label="Title"
 									labelPlacement="stacked"
-									id="icon"></ion-input>
-								<ion-input [ngModel]="deck.creator"
+									id="title"></ion-input>
+								<ion-input [ngModel]="deckDescriptor.creator"
+									(ionChange)="refreshDescriptor()"
 									label="Creator"
 									labelPlacement="stacked"
 									readonly
 									id="title"></ion-input>
-								<ion-textarea [(ngModel)]="deck.description"
+								<ion-textarea [(ngModel)]="deckDescriptor.description"
+									(ionChange)="refreshDescriptor()"
 									label="Description"
 									labelPlacement="stacked"
 									id="description"></ion-textarea>
@@ -46,7 +47,7 @@
 					<ion-list>
 						<ion-item>
 							<ion-select [(ngModel)]="deck.format"
-								(ionChange)="refreshPreviews()"
+								(ionChange)="refreshAllPreviews()"
 								label="Format">
 								<ion-select-option *ngFor="let format of deckFormats"
 									[value]="format">
@@ -57,7 +58,7 @@
 						<ion-item>
 							<ion-toggle [(ngModel)]="deck.drawBorder"
 								[enableOnOffLabels]="true"
-								(ionChange)="refreshPreviews()">
+								(ionChange)="refreshAllPreviews()">
 								Draw borders
 							</ion-toggle>
 						</ion-item>
@@ -65,13 +66,13 @@
 							<ion-label position="stacked">Black Card Color</ion-label>
 							<input [(colorPicker)]="deck.blackCardColor"
 								[style.background]="deck.blackCardColor"
-								(colorPickerClose)="refreshPreviews()">
+								(colorPickerClose)="refreshAllPreviews()">
 						</ion-item>
 						<ion-item>
 							<ion-label position="stacked">Red Card Color</ion-label>
 							<input [(colorPicker)]="deck.redCardColor"
 								[style.background]="deck.redCardColor"
-								(colorPickerClose)="refreshPreviews()">
+								(colorPickerClose)="refreshAllPreviews()">
 						</ion-item>
 					</ion-list>
 				</ion-card-content>
@@ -93,9 +94,9 @@
 							size="6">
 							<ion-item>
 								<ion-thumbnail slot="start">
-									<img [src]="getCardImage(color,'icon')">
+									<img [src]="deck.iconImages[color]">
 								</ion-thumbnail>
-								<ion-button (click)="pickImage(color, 'icon')"
+								<ion-button (click)="pickIconImage(color)"
 									expand="block">
 									{{color}}
 								</ion-button>
@@ -125,11 +126,20 @@
 									<ion-row>
 										<ion-col *ngFor="let number of cardNumbers"
 											size="6">
-											<ion-img [src]="getCardImage(color, number)"
+											<ion-img [src]="cardPreviews[color][number]"
 												class="card-preview-image"></ion-img>
 											<ion-button (click)="pickImage(color, number)"
 												expand="block">
 												{{number}}
+											</ion-button>
+										</ion-col>
+										<ion-col *ngIf="deck.format === 'Tarot'"
+											size="6">
+											<ion-img [src]="cardPreviews[color]['Kn']"
+												class="card-preview-image"></ion-img>
+											<ion-button (click)="pickImage(color, 'Kn')"
+												expand="block">
+												{{'Kn'}}
 											</ion-button>
 										</ion-col>
 									</ion-row>
@@ -148,7 +158,7 @@
 									<ion-row>
 										<ion-col *ngFor="let number of trumpNumbers"
 											size="6">
-											<img [src]="getCardTrumpImage(number)"
+											<img [src]="deck.imagesTrump[number]"
 												alt="Card Preview"
 												class="card-preview-image">
 											<ion-button (click)="pickTrumpImage(number)"
@@ -165,6 +175,23 @@
 			</ion-grid>
 		</ion-card-content>
 	</ion-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

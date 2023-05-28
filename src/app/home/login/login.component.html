@@ -4,6 +4,7 @@
 	</ion-card-header>
 	<ion-card-content>
 		<ion-grid>
+			<!-- THIRD PARTY CREDENTIALS -->
 			<ion-row>
 				<ion-col>
 					<ion-card>
@@ -16,7 +17,6 @@
 									<ion-row no-padding
 										justify-content-start
 										align-items-start>
-										<ion-col></ion-col>
 										<ion-col>
 											<ion-button (click)="loginWithGoogle()"
 												icon-right
@@ -32,22 +32,6 @@
 												Google
 											</ion-button>
 										</ion-col>
-										<ion-col>
-											<ion-button (click)="loginWithFacebook()"
-												icon-right
-												expand="block"
-												fill="outline"
-												shape="round"
-												color="primary">
-												<ion-icon slot="icon-only"
-													size="large"
-													name="logo-facebook"
-													ios="logo-facebook"
-													md="logo-facebook"></ion-icon>
-												Facebook
-											</ion-button>
-										</ion-col>
-										<ion-col></ion-col>
 									</ion-row>
 								</ion-grid>
 							</ion-buttons>
@@ -55,6 +39,7 @@
 					</ion-card>
 				</ion-col>
 			</ion-row>
+			<!-- Email Login/Register -->
 			<ion-row>
 				<ion-col>
 					<ion-card>
@@ -92,9 +77,7 @@
 							</form>
 						</ion-card-content>
 					</ion-card>
-				</ion-col>
-				<ion-col>
-					<ion-card>
+					<ion-card *ngIf="!isSmall">
 						<ion-title>Register</ion-title>
 						<ion-card-content>
 							<form [formGroup]="registerForm"
@@ -130,7 +113,8 @@
 					</ion-card>
 				</ion-col>
 			</ion-row>
-			<ion-row>
+			<!-- Recover Email -->
+			<ion-row *ngIf="!isSmall">
 				<ion-col>
 					<ion-card>
 						<ion-title>

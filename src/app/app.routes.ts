@@ -11,7 +11,7 @@ export const routes: Routes = [
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
   },
   {
-    path: 'selection-editor',
+    path: 'editor',
     loadComponent: () => import('./editorHome/editorhome.page').then((m) => m.EditorHomePage),
   },
   {

@@ -1,19 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
-import { LoginService } from './../../services/login.service';
+import { LoginService } from '../../services/login.service';
 import { NgIf } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-create-custom',
-  templateUrl: './loggin.component.html',
-  styleUrls: ['./loggin.component.scss', '../home.page.scss'],
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss', '../home.page.scss'],
   standalone: true,
   imports: [IonicModule, FormsModule, ReactiveFormsModule, RouterModule, NgIf],
 })
-export class CreateEditorComponent implements OnInit {
+export class LoginComponent implements OnInit {
+  @Input()
+  isSmall = false;
 
   registerForm: FormGroup;
   loginForm: FormGroup;

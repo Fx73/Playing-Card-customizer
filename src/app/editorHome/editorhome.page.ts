@@ -24,7 +24,7 @@ export class EditorHomePage implements OnInit {
   }
 
   ngOnInit() {
-    this.saveService.getDescriptorsList().subscribe(value => this.descriptors = value)
+    this.saveService.getAllDescriptors().then(value => this.descriptors = value)
   }
 
 
@@ -45,7 +45,7 @@ export class EditorHomePage implements OnInit {
       header: dto.title,
       buttons: [
         { text: 'Share', icon: 'share-social', handler: () => this.shareDeck(dto) },
-        { text: 'Delete', role: 'destructive', icon: 'trash', handler: () => this.saveService.deleteDescriptor(dto) },
+        { text: 'Delete', role: 'destructive', icon: 'trash', handler: () => this.saveService.deleteDeck(dto.id) },
         { text: 'Cancel', role: 'cancel' },
       ],
     }).then((as) => {

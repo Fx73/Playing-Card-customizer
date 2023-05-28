@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { CreateEditorComponent } from './loggin.component';
 import { IonicModule } from '@ionic/angular';
+import { LoginComponent } from './login.component';
 
 describe('CreateCustomComponent', () => {
-  let component: CreateEditorComponent;
-  let fixture: ComponentFixture<CreateEditorComponent>;
+  let component: LoginComponent;
+  let fixture: ComponentFixture<LoginComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [CreateEditorComponent],
+      declarations: [LoginComponent],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateEditorComponent);
+    fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

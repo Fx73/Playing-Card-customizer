@@ -8,6 +8,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { environment } from './environments/environment';
 import { firebaseConfig } from './app.config';
 import { getAnalytics } from 'firebase/analytics';
+import { getFirestore } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import { routes } from './app/app.routes';
 
@@ -17,6 +18,7 @@ if (environment.production) {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const analytics = getAnalytics(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 bootstrapApplication(AppComponent, {
   providers: [

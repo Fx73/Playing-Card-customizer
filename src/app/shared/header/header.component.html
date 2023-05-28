@@ -7,16 +7,8 @@
 			style="width:60px"></ion-img>
 		<ion-title class="ion-text-center main-title">{{title}}</ion-title>
 
-		<!-- ion-buttons slot="end">
-			<span *ngIf="user">
-				{{ user!.username }}
-			</span>
-			<ion-button (click)="presentPopover($event)">
-				<ion-icon [color]="user?'success':''"
-					slot="icon-only"
-					name="person">
-				</ion-icon>
-			</ion-button>
-		</ion-buttons -->
+		<ion-buttons slot="end">
+			<app-user></app-user>
+		</ion-buttons>
 	</ion-toolbar>
 </ion-header>

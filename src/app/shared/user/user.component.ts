@@ -1,35 +1,65 @@
-import { Auth, getAuth } from 'firebase/auth';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonicModule, PopoverController } from '@ionic/angular';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-import { AppComponent } from 'src/app/app.component';
+import { LoginComponent } from 'src/app/home/login/login.component';
+import { LoginService } from './../../services/login.service';
+import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
   standalone: true,
-  imports: [IonicModule],
+  imports: [IonicModule, NgIf],
 })
 export class UserComponent implements OnInit {
-  private static instance: UserComponent;
-  name: string = "";
-  email: string = "";
+  @ViewChild('userpopover', { static: false }) userpopover!: HTMLIonPopoverElement;
 
+  public static user: User | null = null
+  get user(): User | null {
+    return UserComponent.user
+  }
+  set user(value: User | null) {
+    UserComponent.user = value
+  }
 
-
-  constructor(private router: Router, private popoverController: PopoverController) {
-    UserComponent.instance = this;
+  constructor(private router: Router, private popoverController: PopoverController, private loginService: LoginService) {
+    this.user = getAuth().currentUser
+    onAuthStateChanged(getAuth(), (_user) => {
+      this.user = _user;
+    });
   }
 
   ngOnInit() {
-    let auth = getAuth();
-    this.name = auth.currentUser?.displayName ?? '';
-    this.email = auth.currentUser?.email ?? '';
   }
 
+
+  async presentPopover(e: Event) {
+    let popover: HTMLIonPopoverElement;
+    if (this.user) {
+      popover = this.userpopover
+      popover.event = e
+    } else {
+      popover = await this.popoverController.create({
+        component: LoginComponent,
+        componentProps: {
+          isSmall: true
+        },
+        event: e,
+      });
+    }
+
+    await popover.present();
+    await popover.onDidDismiss();
+  }
+
+
+
   logout() {
+    this.loginService.logOut()
     this.popoverController.dismiss().then(() => {
       this.router.navigateByUrl('home')
     }

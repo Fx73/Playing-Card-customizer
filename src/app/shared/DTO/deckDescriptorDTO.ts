@@ -1,19 +1,47 @@
+import { FirestoreDataConverter, QueryDocumentSnapshot } from "firebase/firestore"
 
 export class DeckDescriptorDTO {
   id: string
   title: string
+  creator: string
   description: string
   icon: string
-  creator: string
 
 
-  constructor() {
-    this.id = "-1"
-    this.title = "default"
-    this.description = "i am a default deck"
-    this.icon = "https://store-images.s-microsoft.com/image/apps.25913.13546341381523259.8f30b71b-aac8-4816-a999-212ef85f8876.1b6b3f4d-3d78-409e-acc2-57b4950505b7?q=90&w=177&h=265"
-    this.creator = "default creator"
+  constructor(id: string, title: string = "", creator: string = "", description: string = "", icon: string = "assets/CustomCard.png") {
+    this.id = id;
+    this.title = title;
+    this.creator = creator;
+    this.description = description;
+    this.icon = icon;
   }
 
+  toString() {
+    return this.id + ', ' + this.title + ', ' + this.creator + ', ' + this.description + ', ' + this.icon;
+  }
 
 }
+
+// Firestore data converter
+const deckDescriptorConverter: FirestoreDataConverter<DeckDescriptorDTO> = {
+  toFirestore: (dto) => {
+    return {
+      id: dto.id,
+      title: dto.title,
+      description: dto.description,
+      icon: dto.icon,
+      creator: dto.creator
+    };
+  },
+  fromFirestore: (snapshot: QueryDocumentSnapshot<DeckDescriptorDTO>, options): DeckDescriptorDTO => {
+    const data = snapshot.data(options);
+    return new DeckDescriptorDTO(
+      data!.id,
+      data!.title,
+      data!.creator,
+      data!.description,
+      data!.icon,
+    );
+  }
+};
+export { deckDescriptorConverter };
