@@ -1,9 +1,9 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseDeckValues, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
-import { Component, OnInit, } from '@angular/core';
 
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { DeckDescriptorDTO } from '../shared/DTO/deckDescriptorDTO';
 import { DefaultCard } from './default-card';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +19,7 @@ import { UserComponent } from '../shared/user/user.component';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, UserComponent, HeaderComponent, ColorPickerModule,]
 })
-export class EditorPage implements OnInit {
+export class EditorPage {
   readonly deckFormats = Object.values(DeckFormat)
   readonly cardColors: CardColor[] = Object.values(CardColor)
   readonly cardNumbers: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
@@ -75,9 +75,6 @@ export class EditorPage implements OnInit {
 
   }
 
-  ngOnInit(): void {
-  }
-
   saveDeck() {
     this.saveService.updateDeck(this.deck)
   }
@@ -100,7 +97,7 @@ export class EditorPage implements OnInit {
       this.refreshPreview(color, number)
 
     if (this.deck.format === DeckFormat.Tarot)
-        this.refreshPreview(color, 'Kn')
+      this.refreshPreview(color, 'Kn')
   }
 
   refreshPreviewsOfColourTrump() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonicModule, PopoverController } from '@ionic/angular';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 

@@ -75,6 +75,18 @@
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 }
+@media (prefers-color-scheme: light) {
+  body {
+    --ion-background-color: #fcf8fa;
+  }
+  ion-card{
+    --ion-background-color: #ffe3f1;
+  }
+  ion-header{
+    --ion-background-color: #ffbadb;
+  }
+}
+
 
 @media (prefers-color-scheme: dark) {
   /*
