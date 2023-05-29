@@ -21,6 +21,14 @@
 
 
 
+
+
+
+
+
+
+
+
 	<ion-row>
 		<ion-col>
 			<ion-card class="site-introduction">
@@ -63,6 +71,39 @@
 					</div>
 				</ion-card-content>
 			</ion-card>
+			<ion-card>
+				<ion-card-header>
+					<ion-card-title>Help</ion-card-title>
+				</ion-card-header>
+				<ion-card-content>
+					<h2>
+						Need help or want to contribute?
+					</h2>
+					<a href="https://github.com/Fx73/playing-card-customizer"
+						target="_blank">
+						Visit Github
+						<ion-icon name="logo-github"
+							alt="https://github.com/Fx73/playing-card-customizer">
+						</ion-icon>
+					</a>
+					<h2>
+						Found a bug or have a feature request?
+					</h2>
+					<a href="https://github.com/Fx73/playing-card-customizer/issues"
+						target="_blank">
+						Create an issue on GitHub.
+					</a>
+				</ion-card-content>
+			</ion-card>
+
+
+
+
+
+
+
+
+
 		</ion-col>
 		<ion-col>
 			<div *ngIf="isUserLoggedIn(); then accountblock  else loginblock"></div>
