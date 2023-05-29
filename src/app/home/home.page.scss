@@ -28,3 +28,14 @@ ion-card{
 }
 
 
+.home-content{
+  --background	: right 40% url(../../assets/Splash.png);
+  --border-radius : 20px;
+  --border-style: solid;
+  --border-width: 1px;
+  --box-shadow: 10px 10px 5px black;
+  margin: 2vh;
+  font-weight: bolder;
+  font-size: xxx-large;
+  height: 12vh;
+}

@@ -1,33 +1,27 @@
 <app-header title="Playing Card Customizer"></app-header>
 <ion-content>
+	<ion-card>
+		<ion-card-header>
+			<ion-card-title>
+				Welcome to the Playing Card Customizer!
+			</ion-card-title>
+			<ion-card-subtitle>
+				Personalize your own deck of playing cards and make them truly unique.
+			</ion-card-subtitle>
+		</ion-card-header>
+		<ion-card-content>
+			<ion-button [routerLink]="['/editor']"
+				[disabled]="!isUserLoggedIn()"
+				expand="block"
+				class="start-button home-content">
+				Go create some decks
+			</ion-button>
+		</ion-card-content>
+	</ion-card>
+
+
+
 	<ion-row>
-		<ion-col>
-			<ion-card>
-				<ion-card-header>
-					<ion-card-title>
-						Welcome to the Playing Card Customizer!
-					</ion-card-title>
-					<ion-card-subtitle>
-						Personalize your own deck of playing cards and make them truly unique.
-					</ion-card-subtitle>
-				</ion-card-header>
-				<ion-card-content>
-					<ion-button [routerLink]="['/editor']"
-						[disabled]="!isUserLoggedIn()"
-						expand="full"
-						class="start-button">
-						Go create some decks
-					</ion-button>
-				</ion-card-content>
-			</ion-card>
-			<div *ngIf="isUserLoggedIn(); then accountblock  else loginblock"></div>
-			<ng-template #loginblock>
-				<app-login></app-login>
-			</ng-template>
-			<ng-template #accountblock>
-				<app-account></app-account>
-			</ng-template>
-		</ion-col>
 		<ion-col>
 			<ion-card class="site-introduction">
 				<ion-card-header>
@@ -69,6 +63,15 @@
 					</div>
 				</ion-card-content>
 			</ion-card>
+		</ion-col>
+		<ion-col>
+			<div *ngIf="isUserLoggedIn(); then accountblock  else loginblock"></div>
+			<ng-template #loginblock>
+				<app-login></app-login>
+			</ng-template>
+			<ng-template #accountblock>
+				<app-account></app-account>
+			</ng-template>
 		</ion-col>
 	</ion-row>
 </ion-content>
