@@ -1,5 +1,5 @@
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { RouteReuseStrategy, RouterModule, provideRouter } from '@angular/router';
+import { RouteReuseStrategy, provideRouter } from '@angular/router';
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 
 import { AppComponent } from './app/app.component';

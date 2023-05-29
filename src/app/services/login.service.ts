@@ -1,5 +1,6 @@
 import { Auth, FacebookAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateEmail, updatePassword, updateProfile } from 'firebase/auth';
 
+import { AppComponent } from '../app.component';
 import { Injectable } from "@angular/core";
 
 @Injectable({
@@ -15,6 +16,7 @@ export class LoginService {
         console.log(email)
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }
@@ -24,6 +26,7 @@ export class LoginService {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }
@@ -34,6 +37,7 @@ export class LoginService {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }
@@ -44,6 +48,7 @@ export class LoginService {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }
@@ -53,6 +58,7 @@ export class LoginService {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }
@@ -65,6 +71,7 @@ export class LoginService {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          AppComponent.presentWarningToast(errorMessage)
           alert(errorCode);
         });
   }
@@ -76,6 +83,7 @@ export class LoginService {
       }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }
@@ -88,12 +96,14 @@ export class LoginService {
         }).catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          AppComponent.presentWarningToast(errorMessage)
           alert(errorCode);
         });
 
       }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }
@@ -104,6 +114,7 @@ export class LoginService {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        AppComponent.presentWarningToast(errorMessage)
         alert(errorCode);
       });
   }

@@ -1,7 +1,6 @@
 import { IonicModule, ToastController } from '@ionic/angular';
 
 import { Component } from '@angular/core';
-import { UserComponent } from './shared/user/user.component';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +21,6 @@ export class AppComponent {
 
   constructor(private toastController: ToastController) {
     AppComponent.appInstance = this;
-    //UserComponent.cacheLoadUser();
   }
 
 

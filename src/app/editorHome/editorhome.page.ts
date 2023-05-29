@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { DeckDescriptorDTO } from './../shared/DTO/deckDescriptorDTO';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../shared/header/header.component";

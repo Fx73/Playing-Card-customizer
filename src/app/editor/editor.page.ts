@@ -100,7 +100,6 @@ export class EditorPage implements OnInit {
       this.refreshPreview(color, number)
 
     if (this.deck.format === DeckFormat.Tarot)
-      if (this.deck.format === DeckFormat.Tarot)
         this.refreshPreview(color, 'Kn')
   }
 
