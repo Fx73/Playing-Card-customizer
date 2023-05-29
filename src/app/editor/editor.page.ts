@@ -20,10 +20,12 @@ import { UserComponent } from '../shared/user/user.component';
   imports: [IonicModule, CommonModule, FormsModule, UserComponent, HeaderComponent, ColorPickerModule,]
 })
 export class EditorPage implements OnInit {
-  deckFormats = Object.values(DeckFormat)
-  cardColors: CardColor[] = Object.values(CardColor)
-  cardNumbers: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-  trumpNumbers: string[] = Array.from({ length: 21 }, (_, i) => (i + 1).toString());
+  readonly deckFormats = Object.values(DeckFormat)
+  readonly cardColors: CardColor[] = Object.values(CardColor)
+  readonly cardNumbers: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+  readonly trumpNumbers: string[] = Array.from({ length: 21 }, (_, i) => (i + 1).toString());
+  readonly getFontFileName = (color: CardColor): string => `font${color.toLowerCase()}`;
+  readonly input: HTMLInputElement;
 
   deck: DeckDTO = new DeckDTO('')
   deckDescriptor: DeckDescriptorDTO = new DeckDescriptorDTO('')
@@ -37,7 +39,6 @@ export class EditorPage implements OnInit {
       [CardColor.Club]: {},
     }
 
-  readonly input: HTMLInputElement;
 
 
   constructor(private route: ActivatedRoute, private router: Router, private saveService: SaveService) {
@@ -109,7 +110,7 @@ export class EditorPage implements OnInit {
   private pickImageFromInput(imgName: string, callback: (imageUrl: string) => void) {
     if (this.input.files && this.input.files[0]) {
       const file = this.input.files[0];
-      this.saveService.storeImage(imgName, file, this.deck.id).then((imageUrl) => {
+      this.saveService.storeFile(imgName, file, this.deck.id).then((imageUrl) => {
         if (imageUrl)
           callback(imageUrl)
         else
@@ -161,6 +162,40 @@ export class EditorPage implements OnInit {
   }
   //#endregion
 
+  //#region Font
+  uploadFont(color: CardColor) {
+    const input: HTMLInputElement = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.ttf, .otf';
+    input.onchange = (_) => {
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        this.saveService.storeFile(this.getFontFileName(color), file, this.deck.id).then(url => {
+          if (url) {
+            this.deck.iconFont[color].name = file.name.split('.').slice(0, -1).join('.')
+            this.deck.iconFont[color].path = url
+          }
+        }
+        )
+      }
+    };
+    input.click();
+  }
+
+  generateFontCSS(color: CardColor) {
+    if (!this.deck.iconFont[color].path) return
+    const font = this.deck.iconFont[color];
+    const css = `
+          @font-face {
+            font-family: "${font.name}";
+            src: url("${font.path}") format('truetype');
+          }
+        `;
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = css;
+    document.head.appendChild(styleElement);
+  }
+  //#endregion
 
   createFinalImage(color: CardColor, number: string): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
@@ -181,33 +216,38 @@ export class EditorPage implements OnInit {
       colorSymbolImg.src = this.deck.iconImages[color]
 
       const centerImg = new Image();
-      if (this.deck.images[color][number])
+      if (this.deck.images[color][number]) {
         centerImg.src = this.deck.images[color][number]
+        centerImg.crossOrigin = "anonymous"
+      } else {
+
+      }
 
       backgroundImg.onload = async () => {
         canvas.width = backgroundImg.width
         canvas.height = backgroundImg.height
 
-        if (!centerImg.src)
-          centerImg.src = await new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPattern(color, number)
 
         await new Promise<void>((resolve) => {
-          colorSymbolImg.onload = () => {
+          borderImg.onload = () => {
             resolve();
           };
-          borderImg.onload = () => {
+          colorSymbolImg.onload = () => {
             resolve();
           };
         });
         await new Promise<void>((resolve) => {
+          if (!centerImg.src) {
+            new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPattern(color, number).then(val => centerImg.src = val)
+          }
           centerImg.onload = () => {
             resolve();
           };
         });
-        console.log(centerImg.width)
 
         //Properties
-        ctx.font = '160px Arial'
+        this.generateFontCSS(color)
+        ctx.font = '160px ' + this.deck.iconFont[color].name
         ctx.fillStyle = this.deck.colorMapping[color]()
         ctx.textAlign = 'center'
         const iconWidth = 2 * colorSymbolImg.width / 3

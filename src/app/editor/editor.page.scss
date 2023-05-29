@@ -1,3 +1,14 @@
+@font-face {
+  font-family: "numbers-deuce";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../../assets/fonts/numbers-deuce.ttf");
+}
+.fontnumbers{
+  font-family:'numbers-deuce' !important;
+  font-size:0;
+}
+
 .cardplus{
   display: flex;
   justify-content: center;
@@ -49,3 +60,5 @@ ion-img{
 .icon-card{
   margin-top: 0;
 }
+
+

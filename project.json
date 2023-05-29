@@ -29,6 +29,7 @@
         ],
         "styles": [
           "src/theme/variables.scss",
+          "src/theme/components.scss",
           "src/global.scss"
         ],
         "scripts": []
@@ -111,10 +112,16 @@
             "glob": "**/*.svg",
             "input": "node_modules/ionicons/dist/ionicons/svg",
             "output": "./svg"
+          },
+          {
+            "glob": "fonts/*.ttf",
+            "input": "src/assets",
+            "output": "assets"
           }
         ],
         "styles": [
           "src/theme/variables.scss",
+          "src/theme/components.scss",
           "src/global.scss"
         ],
         "scripts": []

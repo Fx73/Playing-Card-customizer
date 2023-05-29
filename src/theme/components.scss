@@ -57,3 +57,14 @@
 }
 
 
+ion-col{
+  margin: 0;
+  padding: 0;
+}
+
+
+.flex-grid{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}

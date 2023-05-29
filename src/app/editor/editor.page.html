@@ -79,38 +79,52 @@
 			</ion-card>
 		</ion-col>
 	</ion-row>
-	<!-- Icon PICKERS -->
+	<!-- Colors Icon & Text -->
 	<ion-card class="icon-card">
 		<ion-accordion-group>
 			<ion-accordion>
 				<ion-item slot="header"
 					color="light">
-					<ion-label>Color Icon</ion-label>
+					<ion-label>
+						Customize  Color Icon & Font
+					</ion-label>
 				</ion-item>
-				<div class="ion-padding"
+				<ion-card class="ion-padding flex-grid"
 					slot="content">
-					<ion-row>
-						<ion-col *ngFor="let color of cardColors"
-							size="6">
+					<ion-card *ngFor="let color of cardColors"
+						size="6">
+						<ion-card-header class="ion-text-center">
+							<ion-card-title>{{color}}</ion-card-title>
+						</ion-card-header>
+						<ion-card-content>
 							<ion-item>
-								<ion-thumbnail slot="start">
+								<ion-thumbnail>
 									<img [src]="deck.iconImages[color]">
 								</ion-thumbnail>
 								<ion-button (click)="pickIconImage(color)"
-									expand="block">
-									{{color}}
+									slot="end">
+									Icon
 								</ion-button>
 							</ion-item>
-						</ion-col>
-					</ion-row>
-				</div>
+							<ion-item>
+								<ion-label>
+									{{deck.iconFont[color].name}}
+								</ion-label>
+								<ion-button (click)="uploadFont(color)"
+									slot="end">
+									Font
+								</ion-button>
+							</ion-item>
+						</ion-card-content>
+					</ion-card>
+				</ion-card>
 			</ion-accordion>
 		</ion-accordion-group>
 	</ion-card>
 	<!-- IMAGES PICKERS -->
 	<ion-card>
 		<ion-card-header>
-			<ion-card-title>Cards</ion-card-title>
+			<ion-card-title>Customize Cards</ion-card-title>
 		</ion-card-header>
 		<ion-card-content>
 			<ion-grid>
@@ -175,55 +189,5 @@
 			</ion-grid>
 		</ion-card-content>
 	</ion-card>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	<div class="fontnumbers">a</div>
 </ion-content>

@@ -2,10 +2,10 @@ import { DeckDTO, deckConverter } from '../shared/DTO/deckDTO';
 import { DeckDescriptorDTO, deckDescriptorConverter } from '../shared/DTO/deckDescriptorDTO';
 import { Firestore, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { Injectable, Injector } from '@angular/core';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
 import { UserComponent } from '../shared/user/user.component';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 @Injectable({
   providedIn: 'root'
@@ -164,6 +164,8 @@ export class SaveService {
       const descriptorDocRef = doc(this.db, UserComponent.user!.uid, 'decks', 'descriptors', deckId);
       await deleteDoc(deckDocRef);
       await deleteDoc(descriptorDocRef);
+      const storageRef = ref(getStorage(), `${UserComponent.user!.uid}/${deckId}`);
+      await deleteObject(storageRef);
     } catch (e) {
       console.error('Error deleting deck: ', e);
       throw e;
@@ -173,12 +175,12 @@ export class SaveService {
   //#endregion
 
   //#region Images
-  async storeImage(imageName: string, imageFile: File, deckId: string): Promise<string | null> {
+  async storeFile(fileName: string, file: File, deckId: string): Promise<string | null> {
     try {
-      const fileExtension = imageFile.name.split('.').pop();
+      const fileExtension = file.name.split('.').pop();
       const storage = getStorage();
-      const storageRef = ref(storage, `${UserComponent.user!.uid}/${deckId}/${imageName}`);
-      await uploadBytes(storageRef, imageFile);
+      const storageRef = ref(storage, `${UserComponent.user!.uid}/${deckId}/${fileName}`);
+      await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
       return downloadURL;
     } catch (e) {

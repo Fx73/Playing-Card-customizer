@@ -49,6 +49,15 @@ export class DeckDTO {
       [CardColor.Club]: "",
     }
 
+  iconFont: {
+    [color in CardColor]: { name: string; path: string };
+  } = {
+      [CardColor.Spade]: { name: "numbers-deuce", path: "" },
+      [CardColor.Heart]: { name: "numbers-deuce", path: "" },
+      [CardColor.Diamond]: { name: "numbers-deuce", path: "" },
+      [CardColor.Club]: { name: "numbers-deuce", path: "" },
+    }
+
   constructor(id: string) {
     this.id = id
   }
@@ -66,6 +75,7 @@ const deckConverter: FirestoreDataConverter<DeckDTO> = {
       images: deck.images,
       imagesTrump: deck.imagesTrump,
       iconImages: deck.iconImages,
+      iconFont: deck.iconFont
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot<DeckDTO>): DeckDTO {
@@ -78,6 +88,7 @@ const deckConverter: FirestoreDataConverter<DeckDTO> = {
     deck.images = data.images;
     deck.imagesTrump = data.imagesTrump;
     deck.iconImages = data.iconImages;
+    deck.iconFont = data.iconFont;
     return deck;
   }
 }
