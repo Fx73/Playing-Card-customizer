@@ -47,7 +47,7 @@
 					<ion-list>
 						<ion-item>
 							<ion-select [(ngModel)]="deck.format"
-								(ionChange)="refreshAllPreviews()"
+								(ionChange)="refreshAllPreviews(); saveDeck()"
 								label="Format">
 								<ion-select-option *ngFor="let format of deckFormats"
 									[value]="format">
@@ -56,23 +56,16 @@
 							</ion-select>
 						</ion-item>
 						<ion-item>
-							<ion-toggle [(ngModel)]="deck.drawBorder"
-								[enableOnOffLabels]="true"
-								(ionChange)="refreshAllPreviews()">
-								Draw borders
-							</ion-toggle>
-						</ion-item>
-						<ion-item>
 							<ion-label position="stacked">Black Card Color</ion-label>
 							<input [(colorPicker)]="deck.blackCardColor"
 								[style.background]="deck.blackCardColor"
-								(colorPickerClose)="refreshAllPreviews()">
+								(colorPickerClose)="refreshAllPreviews(); saveDeck()">
 						</ion-item>
 						<ion-item>
 							<ion-label position="stacked">Red Card Color</ion-label>
 							<input [(colorPicker)]="deck.redCardColor"
 								[style.background]="deck.redCardColor"
-								(colorPickerClose)="refreshAllPreviews()">
+								(colorPickerClose)="refreshAllPreviews(); saveDeck()">
 						</ion-item>
 					</ion-list>
 				</ion-card-content>
@@ -98,12 +91,26 @@
 						</ion-card-header>
 						<ion-card-content>
 							<ion-item>
+								<ion-toggle [(ngModel)]="deck.drawBorder[color]"
+									[enableOnOffLabels]="true"
+									(ionChange)="refreshPreviewsOfColour(color);saveDeck()">
+									Draw borders
+								</ion-toggle>
+							</ion-item>
+							<ion-item>
 								<ion-thumbnail>
 									<img [src]="deck.iconImages[color]">
 								</ion-thumbnail>
 								<ion-button (click)="pickIconImage(color)"
 									slot="end">
 									Icon
+								</ion-button>
+								<ion-button (click)="resetIconImage(color) ; saveDeck()"
+									class="btn-trash"
+									slot="end">
+									<ion-icon size="small"
+										slot="icon-only"
+										name="trash"></ion-icon>
 								</ion-button>
 							</ion-item>
 							<ion-item>
@@ -113,6 +120,78 @@
 								<ion-button (click)="uploadFont(color)"
 									slot="end">
 									Font
+								</ion-button>
+								<ion-button (click)="resetIconFont(color) ; saveDeck()"
+									class="btn-trash"
+									slot="end">
+									<ion-icon size="small"
+										slot="icon-only"
+										name="trash"></ion-icon>
+								</ion-button>
+							</ion-item>
+						</ion-card-content>
+					</ion-card>
+					<ion-card size="6">
+						<ion-card-header class="ion-text-center">
+							<ion-card-title>Trump</ion-card-title>
+						</ion-card-header>
+						<ion-card-content>
+							<ion-item>
+								<ion-toggle [(ngModel)]="deck.drawBorderTrump"
+									[enableOnOffLabels]="true"
+									(ionChange)="refreshPreviewsOfColourTrump();saveDeck()">
+									Draw borders
+								</ion-toggle>
+							</ion-item>
+							<ion-item>
+								<ion-toggle [(ngModel)]="deck.drawBorderTrumpNumber"
+									[enableOnOffLabels]="true"
+									(ionChange)="refreshPreviewsOfColourTrump();saveDeck()">
+									Draw borders of number
+								</ion-toggle>
+							</ion-item>
+							<ion-item>
+								<ion-toggle [(ngModel)]="deck.drawBorderTrumpNumber2"
+									[enableOnOffLabels]="true"
+									(ionChange)="refreshPreviewsOfColourTrump();saveDeck()">
+									Draw borders after number
+								</ion-toggle>
+							</ion-item>
+							<ion-item>
+								<ion-toggle [(ngModel)]="deck.drawBorderTrumpNumberAdditional"
+									[enableOnOffLabels]="true"
+									(ionChange)="refreshPreviewsOfColourTrump();saveDeck()">
+									Fill after number
+								</ion-toggle>
+							</ion-item>
+							<ion-item>
+								<ion-thumbnail>
+									<img [src]="deck.iconImagesTrump">
+								</ion-thumbnail>
+								<ion-button (click)="pickIconImageTrump()"
+									slot="end">
+									Icon
+								</ion-button>
+								<ion-button class="btn-trash"
+									slot="end">
+									<ion-icon size="small"
+										slot="icon-only"
+										name="trash"></ion-icon>
+								</ion-button>
+							</ion-item>
+							<ion-item>
+								<ion-label>
+									{{deck.iconFontTrump.name}}
+								</ion-label>
+								<ion-button (click)="uploadFontTrump()"
+									slot="end">
+									Font
+								</ion-button>
+								<ion-button class="btn-trash"
+									slot="end">
+									<ion-icon size="small"
+										slot="icon-only"
+										name="trash"></ion-icon>
 								</ion-button>
 							</ion-item>
 						</ion-card-content>
@@ -162,7 +241,7 @@
 						</ion-card>
 					</ion-col>
 					<ion-col *ngIf="deck.format === 'Tarot'"
-						size="6">
+						size="12">
 						<ion-card>
 							<ion-card-header>
 								<ion-card-title>Trump</ion-card-title>
@@ -171,10 +250,9 @@
 								<ion-grid>
 									<ion-row>
 										<ion-col *ngFor="let number of trumpNumbers"
-											size="6">
-											<img [src]="deck.imagesTrump[number]"
-												alt="Card Preview"
-												class="card-preview-image">
+											size="3">
+											<ion-img [src]="cardTrumpPreviews[number]"
+												class="card-preview-image"></ion-img>
 											<ion-button (click)="pickTrumpImage(number)"
 												expand="block">
 												{{number}}
@@ -190,4 +268,5 @@
 		</ion-card-content>
 	</ion-card>
 	<div class="fontnumbers">a</div>
+	<div class="fontbasterleur">a</div>
 </ion-content>

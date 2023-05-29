@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
+import { BaseDeckValues, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
 import { Component, OnInit, } from '@angular/core';
 
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -23,9 +23,15 @@ export class EditorPage implements OnInit {
   readonly deckFormats = Object.values(DeckFormat)
   readonly cardColors: CardColor[] = Object.values(CardColor)
   readonly cardNumbers: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-  readonly trumpNumbers: string[] = Array.from({ length: 21 }, (_, i) => (i + 1).toString());
-  readonly getFontFileName = (color: CardColor): string => `font${color.toLowerCase()}`;
+  readonly trumpNumbers: string[] = Array.from({ length: 21 }, (_, i) => (i + 1).toString()).concat('E');
+  readonly colorMapping = {
+    [CardColor.Spade]: () => this.deck.blackCardColor,
+    [CardColor.Heart]: () => this.deck.redCardColor,
+    [CardColor.Diamond]: () => this.deck.redCardColor,
+    [CardColor.Club]: () => this.deck.blackCardColor,
+  };
   readonly input: HTMLInputElement;
+
 
   deck: DeckDTO = new DeckDTO('')
   deckDescriptor: DeckDescriptorDTO = new DeckDescriptorDTO('')
@@ -38,7 +44,7 @@ export class EditorPage implements OnInit {
       [CardColor.Diamond]: {},
       [CardColor.Club]: {},
     }
-
+  cardTrumpPreviews: { [number: string]: string } = {}
 
 
   constructor(private route: ActivatedRoute, private router: Router, private saveService: SaveService) {
@@ -48,22 +54,15 @@ export class EditorPage implements OnInit {
       this.deckDescriptor = new DeckDescriptorDTO(this.deck.id)
       window.history.replaceState({}, 'Deck Editor', 'editor/' + this.deck.id);
 
-      for (const color of Object.values(CardColor))
-        this.resetIconImage(color)
-
       this.saveService.addDescriptor(this.deckDescriptor)
       this.saveService.addDeck(this.deck)
-      for (const color of Object.values(CardColor)) {
-        this.refreshPreviewsOfColour(color)
-      }
+      this.refreshAllPreviews()
     } else {
       saveService.getDescriptorById(id).then(value => this.deckDescriptor = value!)
       saveService.getDeckById(id).then(value => {
         if (value) {
           this.deck = value
-          for (const color of Object.values(CardColor)) {
-            this.refreshPreviewsOfColour(color)
-          }
+          this.refreshAllPreviews()
         } else {
           this.router.navigate(['/editor']);
         }
@@ -73,9 +72,14 @@ export class EditorPage implements OnInit {
     this.input = document.createElement('input')
     this.input.type = 'file';
     this.input.accept = 'image/png, image/jpeg';
+
   }
 
   ngOnInit(): void {
+  }
+
+  saveDeck() {
+    this.saveService.updateDeck(this.deck)
   }
 
   //#region Refresh
@@ -84,25 +88,48 @@ export class EditorPage implements OnInit {
   }
 
   refreshAllPreviews() {
-    this.saveService.updateDeck(this.deck)
-    for (const color of Object.values(CardColor)) {
+    for (const color of Object.values(CardColor))
       this.refreshPreviewsOfColour(color)
-    }
+
+    if (this.deck.format === DeckFormat.Tarot)
+      this.refreshPreviewsOfColourTrump()
   }
+
   refreshPreviewsOfColour(color: CardColor) {
     for (const number of this.cardNumbers)
       this.refreshPreview(color, number)
 
     if (this.deck.format === DeckFormat.Tarot)
-      this.refreshPreview(color, 'Kn')
-
+      if (this.deck.format === DeckFormat.Tarot)
+        this.refreshPreview(color, 'Kn')
   }
+
+  refreshPreviewsOfColourTrump() {
+    for (const number of this.trumpNumbers)
+      this.refreshPreviewTrump(number)
+  }
+
   refreshPreview(color: CardColor, number: string) {
     this.createFinalImage(color, number).then(img => this.cardPreviews[color][number] = img)
   }
 
+  refreshPreviewTrump(number: string) {
+    this.createFinalTrumpImage(number).then(img => this.cardTrumpPreviews[number] = img)
+  }
+
   resetIconImage(color: CardColor) {
-    this.deck.iconImages[color] = 'assets/Standard/icon' + color + '.png'
+    this.deck.iconImages[color] = BaseDeckValues.colorIcon(color)
+  }
+  resetIconImageTrump() {
+    this.deck.iconImagesTrump = BaseDeckValues.trumpIcon
+  }
+  resetIconFont(color: CardColor) {
+    this.deck.iconFont[color].name = BaseDeckValues.colorFont
+    this.deck.iconFont[color].path = ''
+  }
+  resetIconFontTrump() {
+    this.deck.iconFontTrump.name = BaseDeckValues.trumpFont
+    this.deck.iconFontTrump.path = ''
   }
   //#endregion
 
@@ -139,6 +166,16 @@ export class EditorPage implements OnInit {
     };
     this.input.click();
   }
+  pickIconImageTrump() {
+    this.input.onchange = (_) => {
+      this.pickImageFromInput('iconTrump', (imgUrl) => {
+        this.deck.iconImagesTrump = imgUrl;
+        this.saveService.updateDeck(this.deck)
+        this.refreshPreviewsOfColourTrump();
+      });
+    };
+    this.input.click();
+  }
 
   pickImage(color: CardColor, number: string) {
     this.input.onchange = (_) => {
@@ -170,10 +207,30 @@ export class EditorPage implements OnInit {
     input.onchange = (_) => {
       if (input.files && input.files.length > 0) {
         const file = input.files[0];
-        this.saveService.storeFile(this.getFontFileName(color), file, this.deck.id).then(url => {
+        this.saveService.storeFile(`font${color.toLowerCase()}`, file, this.deck.id).then(url => {
           if (url) {
             this.deck.iconFont[color].name = file.name.split('.').slice(0, -1).join('.')
             this.deck.iconFont[color].path = url
+            this.saveService.updateDeck(this.deck)
+          }
+        }
+        )
+      }
+    };
+    input.click();
+  }
+  uploadFontTrump() {
+    const input: HTMLInputElement = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.ttf, .otf';
+    input.onchange = (_) => {
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        this.saveService.storeFile('fontTrump', file, this.deck.id).then(url => {
+          if (url) {
+            this.deck.iconFontTrump.name = file.name.split('.').slice(0, -1).join('.')
+            this.deck.iconFontTrump.path = url
+            this.saveService.updateDeck(this.deck)
           }
         }
         )
@@ -182,9 +239,15 @@ export class EditorPage implements OnInit {
     input.click();
   }
 
-  generateFontCSS(color: CardColor) {
-    if (!this.deck.iconFont[color].path) return
-    const font = this.deck.iconFont[color];
+  generateFontCSS(color: CardColor | null) {
+    let font
+    if (color) {
+      if (!this.deck.iconFont[color].path) return
+      font = this.deck.iconFont[color];
+    } else {
+      if (!this.deck.iconFontTrump.path) return
+      font = this.deck.iconFontTrump;
+    }
     const css = `
           @font-face {
             font-family: "${font.name}";
@@ -214,19 +277,17 @@ export class EditorPage implements OnInit {
 
       const colorSymbolImg = new Image();
       colorSymbolImg.src = this.deck.iconImages[color]
+      colorSymbolImg.crossOrigin = "anonymous"
 
       const centerImg = new Image();
       if (this.deck.images[color][number]) {
         centerImg.src = this.deck.images[color][number]
         centerImg.crossOrigin = "anonymous"
-      } else {
-
       }
 
       backgroundImg.onload = async () => {
         canvas.width = backgroundImg.width
         canvas.height = backgroundImg.height
-
 
         await new Promise<void>((resolve) => {
           borderImg.onload = () => {
@@ -248,7 +309,7 @@ export class EditorPage implements OnInit {
         //Properties
         this.generateFontCSS(color)
         ctx.font = '160px ' + this.deck.iconFont[color].name
-        ctx.fillStyle = this.deck.colorMapping[color]()
+        ctx.fillStyle = this.colorMapping[color]()
         ctx.textAlign = 'center'
         const iconWidth = 2 * colorSymbolImg.width / 3
         const iconHeigth = 2 * colorSymbolImg.height / 3
@@ -259,7 +320,7 @@ export class EditorPage implements OnInit {
 
         //Fond
         ctx.drawImage(backgroundImg, 0, 0)
-        if (this.deck.drawBorder) ctx.drawImage(borderImg, 0, 0)
+        if (this.deck.drawBorder[color]) ctx.drawImage(borderImg, 0, 0)
 
         //D'un coté
         ctx.drawImage(colorSymbolImg, xIconPlacement, yIconPlacement, iconWidth, iconHeigth)
@@ -294,9 +355,118 @@ export class EditorPage implements OnInit {
             ctx.fillText(number[1], xTextPlacement - canvas.width + 86, yTextPlacement - canvas.height)
           }
         }
+        ctx.rotate(-Math.PI);
 
         //Milieu
-        ctx.rotate(-Math.PI);
+        ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
+
+        const finalImage = canvas.toDataURL('image/png');
+        resolve(finalImage);
+      };
+
+      backgroundImg.onerror = () => {
+        reject('Failed to load background image')
+      };
+      colorSymbolImg.onerror = () => {
+        reject('Failed to load color symbol image')
+      };
+    });
+  }
+
+
+  createFinalTrumpImage(number: string): Promise<string> {
+    return new Promise<string>(async (resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject('Canvas context is null');
+        return;
+      }
+
+      const backgroundImg = new Image();
+      backgroundImg.src = 'assets/Standard/layoutTarot.png'
+
+      const borderImg = new Image();
+      borderImg.src = 'assets/Standard/borderTarot.png'
+
+      const borderTrumpImg = new Image();
+      borderTrumpImg.src = 'assets/Standard/borderTarotTrump.png'
+
+      const borderTrump2Img = new Image();
+      borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png'
+
+      const borderTrumpAdditionalImg = new Image();
+      borderTrumpAdditionalImg.src = 'assets/Standard/borderTarotTrumpAdditional.png'
+
+      const colorSymbolImg = new Image(); { }
+      colorSymbolImg.src = this.deck.iconImagesTrump
+      colorSymbolImg.crossOrigin = "anonymous"
+
+      const centerImg = new Image();
+      if (this.deck.imagesTrump[number]) {
+        centerImg.src = this.deck.imagesTrump[number]
+        centerImg.crossOrigin = "anonymous"
+      }
+
+      backgroundImg.onload = async () => {
+        canvas.width = backgroundImg.width
+        canvas.height = backgroundImg.height
+
+        await new Promise<void>((resolve) => {
+          borderImg.onload = () => {
+            resolve();
+          };
+          borderTrumpImg.onload = () => {
+            resolve();
+          };
+          borderTrump2Img.onload = () => {
+            resolve();
+          };
+          borderTrumpAdditionalImg.onload = () => {
+            resolve();
+          };
+          colorSymbolImg.onload = () => {
+            resolve();
+          };
+        });
+        await new Promise<void>((resolve) => {
+          if (!centerImg.src) {
+            new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPatternTrump(number).then(val => centerImg.src = val)
+          }
+          centerImg.onload = () => {
+            resolve();
+          };
+        });
+
+        //Properties
+        this.generateFontCSS(null)
+        ctx.font = '160px ' + this.deck.iconFontTrump.name
+        ctx.textAlign = 'center'
+        const xIconPlacement = 690 - colorSymbolImg.width
+        const yIconPlacement = 140 - colorSymbolImg.height / 2
+        const xTextPlacement = 170
+        const yTextPlacement = 206
+
+        //Fond
+        ctx.drawImage(backgroundImg, 0, 0)
+        if (this.deck.drawBorderTrump) ctx.drawImage(borderImg, 0, 0)
+        if (number !== 'E') {
+          if (this.deck.drawBorderTrumpNumber) ctx.drawImage(borderTrumpImg, 0, 0)
+          if (this.deck.drawBorderTrumpNumber2) ctx.drawImage(borderTrump2Img, 0, 0)
+          if (this.deck.drawBorderTrumpNumberAdditional) ctx.drawImage(borderTrumpAdditionalImg, 0, 0)
+
+          //D'un coté
+          ctx.drawImage(colorSymbolImg, xIconPlacement, yIconPlacement)
+          ctx.fillText(number, xTextPlacement, yTextPlacement)
+
+          //De l'autre coté
+          ctx.rotate(Math.PI);
+          ctx.drawImage(colorSymbolImg, xIconPlacement - backgroundImg.width, yIconPlacement - backgroundImg.height);
+          ctx.fillText(number, xTextPlacement - canvas.width, yTextPlacement - canvas.height)
+          ctx.rotate(-Math.PI);
+        }
+
+        //Milieu
         ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
 
 
@@ -312,6 +482,5 @@ export class EditorPage implements OnInit {
       };
     });
   }
-
 
 }

@@ -56,6 +56,28 @@ export class DefaultCard {
     });
   }
 
+  getDefaultPatternTrump(number: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const localcanvas = document.createElement('canvas');
+      const ctx = localcanvas.getContext('2d');
+
+      if (!ctx) {
+        reject("Cannot create canvas context");
+        return;
+      }
+
+      localcanvas.width = this.canvasWidth;
+      localcanvas.height = this.canvasHeight;
+
+      ctx.font = '320px basteleur'
+      ctx.textAlign = 'center'
+
+      ctx.fillText(number, this.canvasWidth / 2, this.canvasHeight / 2)
+
+      const finalImage = localcanvas.toDataURL('image/png')
+      resolve(finalImage);
+    });
+  }
 
 
 

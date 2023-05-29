@@ -128,27 +128,13 @@ export class SaveService {
     try {
       const deckDocRef = doc(this.db, UserComponent.user!.uid, 'decks', 'deckObjects', deck.id);
       const updateFields: { [key: string]: any } = {};
-      if (deck.format !== this.proxyDeck.format) {
-        updateFields['format'] = deck.format;
-      }
-      if (deck.drawBorder !== this.proxyDeck.drawBorder) {
-        updateFields['drawBorder'] = deck.drawBorder;
-      }
-      if (deck.blackCardColor !== this.proxyDeck.blackCardColor) {
-        updateFields['blackCardColor'] = deck.blackCardColor;
-      }
-      if (deck.redCardColor !== this.proxyDeck.redCardColor) {
-        updateFields['redCardColor'] = deck.redCardColor;
-      }
-      if (JSON.stringify(deck.images) !== JSON.stringify(this.proxyDeck.images)) {
-        updateFields['images'] = deck.images;
-      }
-      if (JSON.stringify(deck.imagesTrump) !== JSON.stringify(this.proxyDeck.imagesTrump)) {
-        updateFields['imagesTrump'] = deck.imagesTrump;
-      }
-      if (JSON.stringify(deck.iconImages) !== JSON.stringify(this.proxyDeck.iconImages)) {
-        updateFields['iconImages'] = deck.iconImages;
-      }
+
+      Object.keys(deck).forEach((key) => {
+        if (JSON.stringify(deck[key as keyof DeckDTO]) !== JSON.stringify(this.proxyDeck[key as keyof DeckDTO])) {
+          updateFields[key] = deck[key as keyof DeckDTO];
+        }
+      });
+
       await updateDoc(deckDocRef, updateFields);
       this.proxyDeck = cloneDeep(deck);
     } catch (e) {
@@ -167,8 +153,10 @@ export class SaveService {
       const storageRef = ref(getStorage(), `${UserComponent.user!.uid}/${deckId}`);
       await deleteObject(storageRef);
     } catch (e) {
-      console.error('Error deleting deck: ', e);
-      throw e;
+      if ((e as { code: string }).code !== 'storage/object-not-found') {
+        console.error('Error deleting deck: ', e);
+        throw e;
+      }
     }
   }
 

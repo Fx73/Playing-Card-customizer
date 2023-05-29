@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [IonicModule, FormsModule, ReactiveFormsModule, RouterModule, NgIf],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   @Input()
   isSmall = false;
 
@@ -35,8 +35,7 @@ export class LoginComponent implements OnInit {
       email: ['', Validators.compose([Validators.required, Validators.email])],
     });
   }
-  ngOnInit() {
-  }
+
 
   register(email: string, password: string): void {
     this.loginService.register(email, password)

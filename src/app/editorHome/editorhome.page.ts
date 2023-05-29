@@ -17,13 +17,13 @@ import { actionSheetController } from '@ionic/core';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, UserComponent, HeaderComponent]
 })
-export class EditorHomePage implements OnInit {
+export class EditorHomePage {
   descriptors: DeckDescriptorDTO[] = Array<DeckDescriptorDTO>();
 
   constructor(private router: Router, private saveService: SaveService) {
   }
 
-  ngOnInit() {
+  ionViewDidEnter() {
     this.saveService.getAllDescriptors().then(value => this.descriptors = value)
   }
 
@@ -45,7 +45,7 @@ export class EditorHomePage implements OnInit {
       header: dto.title,
       buttons: [
         { text: 'Share', icon: 'share-social', handler: () => this.shareDeck(dto) },
-        { text: 'Delete', role: 'destructive', icon: 'trash', handler: () => this.saveService.deleteDeck(dto.id) },
+        { text: 'Delete', role: 'destructive', icon: 'trash', handler: () => this.deleteDeck(dto.id) },
         { text: 'Cancel', role: 'cancel' },
       ],
     }).then((as) => {
@@ -57,6 +57,10 @@ export class EditorHomePage implements OnInit {
 
   }
 
+  deleteDeck(id: string) {
+    this.saveService.deleteDeck(id);
+    this.descriptors.splice(this.descriptors.findIndex(descriptor => descriptor.id === id), 1);
+  }
 
 
 }

@@ -37,10 +37,9 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content:flex-start;
-
   ion-card{
-    max-width: 200px;
-    max-height: 300px;
+    width: 24vw;
+    height: 50vh;
   }
 }
 
@@ -53,7 +52,7 @@
   height: auto;
   --padding-start:0;
   --padding-end:0;
- --background: grey;
+ --background: lightgrey;
 }
 
 

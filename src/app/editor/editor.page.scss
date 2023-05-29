@@ -1,11 +1,18 @@
 @font-face {
   font-family: "numbers-deuce";
-  font-style: normal;
-  font-weight: normal;
-  src: url("../../assets/fonts/numbers-deuce.ttf");
+  src: url("../../assets/fonts/NumbersDeuce.woff2");
 }
+@font-face {
+  font-family: "basteleur";
+  src: url("../../assets/fonts/Basteleur-Bold.woff2");
+}
+
 .fontnumbers{
   font-family:'numbers-deuce' !important;
+  font-size:0;
+}
+.fontbasterleur{
+  font-family:'basteleur' !important;
   font-size:0;
 }
 
@@ -62,3 +69,13 @@ ion-img{
 }
 
 
+.btn-trash{
+  margin: 0;
+  --padding-start:2px;
+  --padding-bottom:2px;
+  --padding-top:2px;
+  --padding-end:2px;
+  ion-icon{
+    width: 12px;
+  }
+}

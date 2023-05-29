@@ -11,15 +11,12 @@ import { UserComponent } from '../user/user.component';
   standalone: true,
   imports: [IonicModule, RouterModule, UserComponent]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
   @Input()
   title: string = "Welcome";
 
   constructor(public popoverController: PopoverController) { }
-
-  ngOnInit() { }
-
 
 
 

@@ -1,3 +1,4 @@
+import { EditorGuard } from './editor/editor.guard';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -13,9 +14,11 @@ export const routes: Routes = [
   {
     path: 'editor',
     loadComponent: () => import('./editorHome/editorhome.page').then((m) => m.EditorHomePage),
+    canActivate: [EditorGuard]
   },
   {
     path: 'editor/:id',
-    loadComponent: () => import('./editor/editor.page').then(m => m.EditorPage)
+    loadComponent: () => import('./editor/editor.page').then(m => m.EditorPage),
+    canActivate: [EditorGuard]
   },
 ];

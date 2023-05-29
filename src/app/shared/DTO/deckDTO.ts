@@ -1,7 +1,5 @@
 import { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore';
 
-import { DeckDescriptorDTO } from "./deckDescriptorDTO";
-
 export enum DeckFormat {
   Classic = 'Classic',
   Tarot = 'Tarot',
@@ -14,20 +12,35 @@ export enum CardColor {
   Club = 'Club',
 }
 
-export class DeckDTO {
-  readonly colorMapping = {
-    [CardColor.Spade]: () => this.blackCardColor,
-    [CardColor.Heart]: () => this.redCardColor,
-    [CardColor.Diamond]: () => this.redCardColor,
-    [CardColor.Club]: () => this.blackCardColor,
-  };
+export class BaseDeckValues {
+  static readonly colorFont = "numbers-deuce"
+  static readonly trumpFont = "basteleur"
+  static readonly trumpIcon = 'assets/Standard/iconEmpty.png'
+  static readonly colorIcon: (color: CardColor) => string = (color: CardColor) => `assets/Standard/icon${color}.png`
 
+}
+
+export class DeckDTO {
   id: string
 
   format: DeckFormat = DeckFormat.Classic
-  drawBorder: boolean = false
   blackCardColor: string = "black"
   redCardColor: string = "red"
+
+  drawBorder: {
+    [color in CardColor]: boolean;
+  } = {
+      [CardColor.Spade]: false,
+      [CardColor.Heart]: false,
+      [CardColor.Diamond]: false,
+      [CardColor.Club]: false,
+    }
+
+
+  drawBorderTrump: boolean = false
+  drawBorderTrumpNumber: boolean = false
+  drawBorderTrumpNumber2: boolean = false
+  drawBorderTrumpNumberAdditional: boolean = false
 
   images: {
     [color in CardColor]: { [number: string]: string };
@@ -43,20 +56,24 @@ export class DeckDTO {
   iconImages: {
     [color in CardColor]: string;
   } = {
-      [CardColor.Spade]: "",
-      [CardColor.Heart]: "",
-      [CardColor.Diamond]: "",
-      [CardColor.Club]: "",
+      [CardColor.Spade]: BaseDeckValues.colorIcon(CardColor.Spade),
+      [CardColor.Heart]: BaseDeckValues.colorIcon(CardColor.Heart),
+      [CardColor.Diamond]: BaseDeckValues.colorIcon(CardColor.Diamond),
+      [CardColor.Club]: BaseDeckValues.colorIcon(CardColor.Club),
     }
+
+  iconImagesTrump: string = BaseDeckValues.trumpIcon
 
   iconFont: {
     [color in CardColor]: { name: string; path: string };
   } = {
-      [CardColor.Spade]: { name: "numbers-deuce", path: "" },
-      [CardColor.Heart]: { name: "numbers-deuce", path: "" },
-      [CardColor.Diamond]: { name: "numbers-deuce", path: "" },
-      [CardColor.Club]: { name: "numbers-deuce", path: "" },
+      [CardColor.Spade]: { name: BaseDeckValues.colorFont, path: "" },
+      [CardColor.Heart]: { name: BaseDeckValues.colorFont, path: "" },
+      [CardColor.Diamond]: { name: BaseDeckValues.colorFont, path: "" },
+      [CardColor.Club]: { name: BaseDeckValues.colorFont, path: "" },
     }
+
+  iconFontTrump: { name: string; path: string } = { name: BaseDeckValues.trumpFont, path: "" }
 
   constructor(id: string) {
     this.id = id
@@ -66,29 +83,19 @@ export class DeckDTO {
 
 const deckConverter: FirestoreDataConverter<DeckDTO> = {
   toFirestore(deck: DeckDTO): DocumentData {
-    return {
-      id: deck.id,
-      format: deck.format,
-      drawBorder: deck.drawBorder,
-      blackCardColor: deck.blackCardColor,
-      redCardColor: deck.redCardColor,
-      images: deck.images,
-      imagesTrump: deck.imagesTrump,
-      iconImages: deck.iconImages,
-      iconFont: deck.iconFont
-    };
+    const data: DocumentData = {};
+    Object.keys(deck).forEach((key) => {
+      data[key] = Reflect.get(deck, key);
+    });
+    return data
   },
+
   fromFirestore(snapshot: QueryDocumentSnapshot<DeckDTO>): DeckDTO {
     const data = snapshot.data();
     const deck = new DeckDTO(data.id);
-    deck.format = data.format;
-    deck.drawBorder = data.drawBorder;
-    deck.blackCardColor = data.blackCardColor;
-    deck.redCardColor = data.redCardColor;
-    deck.images = data.images;
-    deck.imagesTrump = data.imagesTrump;
-    deck.iconImages = data.iconImages;
-    deck.iconFont = data.iconFont;
+    Object.keys(data).forEach((key) => {
+      Reflect.set(deck, key, data[key as keyof DeckDTO]);
+    });
     return deck;
   }
 }
