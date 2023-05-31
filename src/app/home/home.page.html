@@ -10,25 +10,19 @@
 			</ion-card-subtitle>
 		</ion-card-header>
 		<ion-card-content>
+			<ion-button [routerLink]="['/browse']"
+				expand="block"
+				class="start-button home-content home-content-bgimg">
+				Browse creations
+			</ion-button>
 			<ion-button [routerLink]="['/editor']"
 				[disabled]="!isUserLoggedIn()"
 				expand="block"
-				class="start-button home-content">
-				Go create some decks
+				class="start-button home-content home-content-bgimg2">
+				Customize now !
 			</ion-button>
 		</ion-card-content>
 	</ion-card>
-
-
-
-
-
-
-
-
-
-
-
 	<ion-row>
 		<ion-col>
 			<ion-card class="site-introduction">
@@ -71,10 +65,21 @@
 					</div>
 				</ion-card-content>
 			</ion-card>
+		</ion-col>
+		<ion-col>
+			<div *ngIf="isUserLoggedIn(); then accountblock  else loginblock"></div>
+			<ng-template #loginblock>
+				<app-login class="flex-expand"></app-login>
+			</ng-template>
+			<ng-template #accountblock>
+				<app-account class="flex-expand"></app-account>
+			</ng-template>
+		</ion-col>
+	</ion-row>
+	<ion-row>
+		<ion-col>
 			<ion-card>
-				<ion-card-header>
-					<ion-card-title>Help</ion-card-title>
-				</ion-card-header>
+				<ion-card-header></ion-card-header>
 				<ion-card-content>
 					<h2>
 						Need help or want to contribute?
@@ -95,24 +100,6 @@
 					</a>
 				</ion-card-content>
 			</ion-card>
-
-
-
-
-
-
-
-
-
-		</ion-col>
-		<ion-col>
-			<div *ngIf="isUserLoggedIn(); then accountblock  else loginblock"></div>
-			<ng-template #loginblock>
-				<app-login></app-login>
-			</ng-template>
-			<ng-template #accountblock>
-				<app-account></app-account>
-			</ng-template>
 		</ion-col>
 	</ion-row>
 </ion-content>

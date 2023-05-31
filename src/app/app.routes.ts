@@ -21,4 +21,8 @@ export const routes: Routes = [
     loadComponent: () => import('./editor/editor.page').then(m => m.EditorPage),
     canActivate: [EditorGuard]
   },
+  {
+    path: 'browse',
+    loadComponent: () => import('./browse/browse.page').then((m) => m.BrowsePage),
+  },
 ];

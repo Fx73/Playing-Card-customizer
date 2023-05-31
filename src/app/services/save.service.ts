@@ -1,9 +1,9 @@
 import { DeckDTO, deckConverter } from '../shared/DTO/deckDTO';
 import { DeckDescriptorDTO, deckDescriptorConverter } from '../shared/DTO/deckDescriptorDTO';
-import { Firestore, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
-import { Injectable, Injector } from '@angular/core';
+import { Firestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 
+import { Injectable } from '@angular/core';
 import { UserComponent } from '../shared/user/user.component';
 import { cloneDeep } from 'lodash-es';
 
@@ -11,40 +11,19 @@ import { cloneDeep } from 'lodash-es';
   providedIn: 'root'
 })
 export class SaveService {
-  private proxyService: SaveService | null = null;
   db: Firestore
   proxyDeck: DeckDTO = new DeckDTO('')
 
-  constructor(private injector: Injector) {
+  constructor() {
     this.db = getFirestore()
 
   }
 
-  //#region UserProxy
-
-
-  withUserCheck<T>(func: (...args: any[]) => T): (...args: any[]) => Promise<T> {
-    return async (...args: any[]): Promise<T> => {
-      console.log("I AM IN PROXY")
-      if (!UserComponent.user) {
-        await new Promise<void>((resolve) => {
-          const interval = setInterval(() => {
-            if (UserComponent.user) {
-              clearInterval(interval);
-              resolve();
-            }
-          }, 100);
-        });
-      }
-      return func(...args);
-    };
-  }
-  //#endregion
 
   //#region Descriptors
   async getAllDescriptors(): Promise<DeckDescriptorDTO[]> {
     try {
-      const docRef = collection(this.db, UserComponent.user!.uid, 'decks', 'descriptors');
+      const docRef = collection(this.db, 'users', UserComponent.user!.uid, 'descriptors');
       const querySnapshot = await getDocs(docRef);
       const descriptors: DeckDescriptorDTO[] = [];
       querySnapshot.forEach((doc) => {
@@ -60,7 +39,7 @@ export class SaveService {
 
   async getDescriptorById(descriptorId: string): Promise<DeckDescriptorDTO | null> {
     try {
-      const descriptorDocRef = doc(this.db, UserComponent.user!.uid, 'decks', 'descriptors', descriptorId);
+      const descriptorDocRef = doc(this.db, 'users', UserComponent.user!.uid, 'descriptors', descriptorId);
       const descriptorDocSnap = await getDoc(descriptorDocRef);
       if (descriptorDocSnap.exists()) {
         return descriptorDocSnap.data() as DeckDescriptorDTO;
@@ -76,7 +55,7 @@ export class SaveService {
 
   async addDescriptor(dto: DeckDescriptorDTO) {
     try {
-      const docRef = doc(this.db, UserComponent.user!.uid, 'decks', 'descriptors', dto.id).withConverter(deckDescriptorConverter)
+      const docRef = doc(this.db, 'users', UserComponent.user!.uid, 'descriptors', dto.id).withConverter(deckDescriptorConverter)
       await setDoc(docRef, dto);
     } catch (e) {
       console.error('Error adding descriptor: ', e);
@@ -86,7 +65,7 @@ export class SaveService {
   async updateDescriptor(dto: DeckDescriptorDTO) {
     if (!UserComponent.user) return;
     try {
-      const docRef = doc(this.db, UserComponent.user.uid, 'decks', 'descriptors', dto.id).withConverter(deckDescriptorConverter)
+      const docRef = doc(this.db, 'users', UserComponent.user.uid, 'descriptors', dto.id).withConverter(deckDescriptorConverter)
       await setDoc(docRef, dto, { merge: true });
     } catch (e) {
       console.error('Error updating descriptor: ', e);
@@ -98,7 +77,7 @@ export class SaveService {
   //#region Deck
   async addDeck(deck: DeckDTO): Promise<void> {
     try {
-      const docRef = doc(this.db, UserComponent.user!.uid, 'decks', 'deckObjects', deck.id).withConverter(deckConverter);
+      const docRef = doc(this.db, 'users', UserComponent.user!.uid, 'deckObjects', deck.id).withConverter(deckConverter);
       await setDoc(docRef, deck);
       this.proxyDeck = cloneDeep(deck);
     } catch (e) {
@@ -109,7 +88,7 @@ export class SaveService {
 
   async getDeckById(deckId: string): Promise<DeckDTO | null> {
     try {
-      const docRef = doc(this.db, UserComponent.user!.uid, 'decks', 'deckObjects', deckId);
+      const docRef = doc(this.db, 'users', UserComponent.user!.uid, 'deckObjects', deckId);
       const docSnapshot = await getDoc(docRef.withConverter(deckConverter));
       if (docSnapshot.exists()) {
         const deck = docSnapshot.data();
@@ -126,7 +105,7 @@ export class SaveService {
 
   async updateDeck(deck: DeckDTO): Promise<void> {
     try {
-      const deckDocRef = doc(this.db, UserComponent.user!.uid, 'decks', 'deckObjects', deck.id);
+      const deckDocRef = doc(this.db, 'users', UserComponent.user!.uid, 'deckObjects', deck.id);
       const updateFields: { [key: string]: any } = {};
 
       Object.keys(deck).forEach((key) => {
@@ -146,8 +125,8 @@ export class SaveService {
 
   async deleteDeck(deckId: string): Promise<void> {
     try {
-      const deckDocRef = doc(this.db, UserComponent.user!.uid, 'decks', 'deckObjects', deckId);
-      const descriptorDocRef = doc(this.db, UserComponent.user!.uid, 'decks', 'descriptors', deckId);
+      const deckDocRef = doc(this.db, 'users', UserComponent.user!.uid, 'deckObjects', deckId);
+      const descriptorDocRef = doc(this.db, 'users', UserComponent.user!.uid, 'descriptors', deckId);
       await deleteDoc(deckDocRef);
       await deleteDoc(descriptorDocRef);
       const storageRef = ref(getStorage(), `${UserComponent.user!.uid}/${deckId}`);
@@ -178,6 +157,18 @@ export class SaveService {
   }
 
   //#endregion
+
+  async addDescriptorToPublic(descriptor: DeckDescriptorDTO, isPublic: boolean): Promise<void> {
+    if (isPublic) {
+      const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter);
+      await setDoc(docRef, descriptor);
+
+    } else {
+      const docRef = doc(this.db, 'public', descriptor.id);
+      await deleteDoc(docRef);
+    }
+
+  }
 
   generateRandomId(length: number): string {
     const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

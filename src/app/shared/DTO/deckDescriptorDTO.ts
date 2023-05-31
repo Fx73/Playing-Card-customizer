@@ -8,7 +8,7 @@ export class DeckDescriptorDTO {
   icon: string
 
 
-  constructor(id: string, title: string = "", creator: string = "", description: string = "", icon: string = "assets/Icon.png") {
+  constructor(id: string, title: string = "", creator: string = "AnonymUser", description: string = "", icon: string = "assets/Icon.png") {
     this.id = id;
     this.title = title;
     this.creator = creator;

@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseDeckValues, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
 
+import { ArchiverService } from './../services/archiver.service';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
@@ -45,20 +46,27 @@ export class EditorPage {
       [CardColor.Club]: {},
     }
   cardTrumpPreviews: { [number: string]: string } = {}
+  cardBackPreview: string = ""
 
-
-  constructor(private route: ActivatedRoute, private router: Router, private saveService: SaveService) {
+  constructor(private route: ActivatedRoute, private router: Router, private saveService: SaveService, private archiverService: ArchiverService) {
     const id = this.route.snapshot.paramMap.get('id')!
     if (id == 'new') {
       this.deck = new DeckDTO(saveService.generateRandomId(8))
       this.deckDescriptor = new DeckDescriptorDTO(this.deck.id)
+      if (UserComponent.user!.displayName)
+        this.deckDescriptor.creator = UserComponent.user!.displayName
+
       window.history.replaceState({}, 'Deck Editor', 'editor/' + this.deck.id);
 
       this.saveService.addDescriptor(this.deckDescriptor)
       this.saveService.addDeck(this.deck)
       this.refreshAllPreviews()
     } else {
-      saveService.getDescriptorById(id).then(value => this.deckDescriptor = value!)
+      saveService.getDescriptorById(id).then(value => {
+        this.deckDescriptor = value!
+        if (this.deckDescriptor.creator !== UserComponent.user!.displayName && UserComponent.user!.displayName)
+          this.deckDescriptor.creator = UserComponent.user!.displayName
+      })
       saveService.getDeckById(id).then(value => {
         if (value) {
           this.deck = value
@@ -78,6 +86,20 @@ export class EditorPage {
   saveDeck() {
     this.saveService.updateDeck(this.deck)
   }
+  makePublic(isPublic: boolean) {
+    this.saveService.addDescriptorToPublic(this.deckDescriptor, isPublic)
+  }
+
+  exportDeck() {
+    this.archiverService.createDeckArchive(this.cardBackPreview, this.cardPreviews, this.cardTrumpPreviews).then(blob => {
+      const link = document.createElement("a")
+      link.href = URL.createObjectURL(blob)
+      link.download = this.deckDescriptor.title
+      link.click()
+      link.remove()
+    })
+
+  }
 
   //#region Refresh
   refreshDescriptor() {
@@ -90,6 +112,8 @@ export class EditorPage {
 
     if (this.deck.format === DeckFormat.Tarot)
       this.refreshPreviewsOfColourTrump()
+
+    this.createBackCard().then(img => this.cardBackPreview = img)
   }
 
   refreshPreviewsOfColour(color: CardColor) {
@@ -146,6 +170,7 @@ export class EditorPage {
     this.input.onchange = (_) => {
       this.pickImageFromInput('deckIcon', (imgUrl) => {
         this.deckDescriptor.icon = imgUrl;
+        this.createBackCard().then(img => this.cardBackPreview = img)
         this.saveService.updateDescriptor(this.deckDescriptor)
       });
     };
@@ -360,12 +385,6 @@ export class EditorPage {
         resolve(finalImage);
       };
 
-      backgroundImg.onerror = () => {
-        reject('Failed to load background image')
-      };
-      colorSymbolImg.onerror = () => {
-        reject('Failed to load color symbol image')
-      };
     });
   }
 
@@ -470,13 +489,46 @@ export class EditorPage {
         resolve(finalImage);
       };
 
-      backgroundImg.onerror = () => {
-        reject('Failed to load background image')
-      };
-      colorSymbolImg.onerror = () => {
-        reject('Failed to load color symbol image')
-      };
     });
   }
 
+
+  createBackCard(): Promise<string> {
+    return new Promise<string>(async (resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject('Canvas context is null');
+        return;
+      }
+
+      const backgroundImg = new Image();
+      backgroundImg.src = 'assets/Standard/layout' + this.deck.format + '.png'
+
+      const centerImg = new Image();
+      centerImg.src = this.deckDescriptor.icon
+      centerImg.crossOrigin = "anonymous"
+
+
+      backgroundImg.onload = async () => {
+        canvas.width = backgroundImg.width
+        canvas.height = backgroundImg.height
+
+        await new Promise<void>((resolve) => {
+          centerImg.onload = () => {
+            resolve();
+          };
+        });
+
+        ctx.drawImage(backgroundImg, 0, 0)
+        ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
+
+
+        const finalImage = canvas.toDataURL('image/png');
+        resolve(finalImage);
+      };
+
+    });
+
+  }
 }

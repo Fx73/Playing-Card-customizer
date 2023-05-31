@@ -1,0 +1,27 @@
+<app-header title="Browse decks"></app-header>
+<ion-content fullscreen="true">
+	<ion-card>
+		<ion-searchbar [debounce]="1000"
+			(ionInput)="onSearch($event)"
+			show-clear-button="focus"></ion-searchbar>
+	</ion-card>
+	<div class="cardList">
+		<!-- Cartes -->
+		<ion-card *ngFor="let d of descriptors"
+			(click)="loadDeck(d)"
+			class="basicCard">
+			<ion-card-header>
+				<ion-card-title size="large">{{d.title}}</ion-card-title>
+			</ion-card-header>
+			<ion-card-content>
+				<ion-text>{{d.description}}</ion-text>
+				<ion-item>
+					<ion-img [src]="d.icon"></ion-img>
+				</ion-item>
+			</ion-card-content>
+		</ion-card>
+	</div>
+	<ion-infinite-scroll (ionInfinite)="onIonInfinite()">
+		<ion-infinite-scroll-content></ion-infinite-scroll-content>
+	</ion-infinite-scroll>
+</ion-content>

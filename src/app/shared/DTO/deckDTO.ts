@@ -75,6 +75,7 @@ export class DeckDTO {
 
   iconFontTrump: { name: string; path: string } = { name: BaseDeckValues.trumpFont, path: "" }
 
+  isPublic = false;
   constructor(id: string) {
     this.id = id
   }

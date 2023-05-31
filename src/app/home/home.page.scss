@@ -27,15 +27,28 @@ ion-card{
   margin-left: 6px;
 }
 
+.home-content-bgimg{
+  --background	: right 40% / cover  no-repeat  url(../../assets/SplashCut.png);
+  font-size: 5vw;
+}
+.home-content-bgimg2{
+  --background	: right 40% / cover  no-repeat  url(../../assets/SplashCutBlur2.png);
+  font-size: 6vw;
+}
+
 
 .home-content{
-  --background	: right 40% url(../../assets/Splash.png);
   --border-radius : 20px;
   --border-style: solid;
   --border-width: 1px;
-  --box-shadow: 10px 10px 5px black;
+  --box-shadow: 10px 10px 5px rgb(0, 0, 0);
   margin: 2vh;
   font-weight: bolder;
-  font-size: xxx-large;
+  color: #6aa1e9dc;
   height: 12vh;
+}
+
+.flex-expand{
+  display: flex;
+  height: 100%;
 }

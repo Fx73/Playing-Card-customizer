@@ -11,7 +11,7 @@
 					<ion-grid>
 						<ion-row>
 							<ion-col size="3">
-								<ion-img [src]="deckDescriptor.icon"
+								<ion-img [src]="cardBackPreview"
 									(click)="pickDeckImage()"></ion-img>
 							</ion-col>
 							<ion-col>
@@ -36,6 +36,13 @@
 					</ion-grid>
 				</ion-card-content>
 			</ion-card>
+			<!-- Export -->
+			<ion-card>
+				<ion-button (click)="exportDeck()"
+					expand="block">
+					Export Deck
+				</ion-button>
+			</ion-card>
 		</ion-col>
 		<ion-col>
 			<!-- PROPRIETES DE BASE -->
@@ -45,6 +52,13 @@
 				</ion-card-header>
 				<ion-card-content>
 					<ion-list>
+						<ion-item>
+							<ion-toggle [(ngModel)]="deck.isPublic"
+								[enableOnOffLabels]="true"
+								(ionChange)="makePublic(deck.isPublic) ; saveDeck()">
+								Set public
+							</ion-toggle>
+						</ion-item>
 						<ion-item>
 							<ion-select [(ngModel)]="deck.format"
 								(ionChange)="refreshAllPreviews(); saveDeck()"
