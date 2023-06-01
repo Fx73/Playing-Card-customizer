@@ -1,0 +1,81 @@
+@font-face {
+  font-family: "numbers-deuce";
+  src: url("../../assets/fonts/NumbersDeuce.woff2");
+}
+@font-face {
+  font-family: "basteleur";
+  src: url("../../assets/fonts/Basteleur-Bold.woff2");
+}
+
+.fontnumbers{
+  font-family:'numbers-deuce' !important;
+  font-size:0;
+}
+.fontbasterleur{
+  font-family:'basteleur' !important;
+  font-size:0;
+}
+
+.cardplus{
+  display: flex;
+  justify-content: center;
+  font-size: 3rem;
+  border: dashed  2px rgb(53, 53, 53);
+}
+
+.cardtitle ion-input, ion-textarea {
+  color: antiquewhite;
+  margin-left: 4px;
+}
+
+
+.entryCard{
+  ion-card-content{
+    padding: 2px;
+  }
+  ion-col{
+    padding: 2px;
+  }
+  .minusCol{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+  ion-button{
+    margin: 0;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    --color: initial;
+    --background: transparent;
+    --background-activated: transparent;
+    --background-focused: currentColor;
+    --background-hover: currentColor;
+    --padding-top:24px;
+    --padding-bottom:24px;
+    --padding-start:10px;
+    --padding-end:10px;
+    --border-radius: 50%;
+    --box-shadow: none;
+    }
+}
+
+ion-img{
+  margin: 1px;
+}
+
+.icon-card{
+  margin-top: 0;
+}
+
+
+.btn-trash{
+  margin: 0;
+  --padding-start:2px;
+  --padding-bottom:2px;
+  --padding-top:2px;
+  --padding-end:2px;
+  ion-icon{
+    width: 12px;
+  }
+}

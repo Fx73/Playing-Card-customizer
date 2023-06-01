@@ -1,0 +1,95 @@
+<app-header title="View Deck"></app-header>
+<ion-content fullscreen="true">
+	<!-- HEADER -->
+	<ion-card class="cardtitle">
+		<ion-card-header>
+			<ion-card-title>Deck description</ion-card-title>
+		</ion-card-header>
+		<ion-card-content>
+			<ion-grid>
+				<ion-row>
+					<ion-col size="3">
+						<ion-img [src]="cardBackPreview"></ion-img>
+					</ion-col>
+					<ion-col>
+						<ion-input [value]="deckDescriptor.title"
+							label="Title"
+							labelPlacement="stacked"
+							id="title"></ion-input>
+						<ion-input [value]="deckDescriptor.creator"
+							label="Creator"
+							labelPlacement="stacked"
+							readonly
+							id="title"></ion-input>
+						<ion-textarea [value]="deckDescriptor.description"
+							label="Description"
+							labelPlacement="stacked"
+							id="description"></ion-textarea>
+					</ion-col>
+				</ion-row>
+			</ion-grid>
+		</ion-card-content>
+	</ion-card>
+	<!-- Export -->
+	<ion-card>
+		<ion-button (click)="exportDeck()"
+			expand="block">
+			Export Deck
+		</ion-button>
+	</ion-card>
+	<!-- IMAGES PICKERS -->
+	<ion-card>
+		<ion-card-header>
+			<ion-card-title>Customized Cards</ion-card-title>
+		</ion-card-header>
+		<ion-card-content>
+			<ion-grid>
+				<ion-row>
+					<ion-col *ngFor="let color of cardColors"
+						size="6">
+						<ion-card>
+							<ion-card-header>
+								<ion-card-title>{{ color }}</ion-card-title>
+							</ion-card-header>
+							<ion-card-content>
+								<ion-grid>
+									<ion-row>
+										<ion-col *ngFor="let number of cardNumbers"
+											size="6">
+											<ion-img [src]="cardPreviews[color][number]"
+												class="card-preview-image"></ion-img>
+										</ion-col>
+										<ion-col *ngIf="deckFormat === 'Tarot'"
+											size="6">
+											<ion-img [src]="cardPreviews[color]['Kn']"
+												class="card-preview-image"></ion-img>
+										</ion-col>
+									</ion-row>
+								</ion-grid>
+							</ion-card-content>
+						</ion-card>
+					</ion-col>
+					<ion-col *ngIf="deckFormat === 'Tarot'"
+						size="12">
+						<ion-card>
+							<ion-card-header>
+								<ion-card-title>Trump</ion-card-title>
+							</ion-card-header>
+							<ion-card-content>
+								<ion-grid>
+									<ion-row>
+										<ion-col *ngFor="let number of trumpNumbers"
+											size="3">
+											<ion-img [src]="cardTrumpPreviews[number]"
+												class="card-preview-image"></ion-img>
+										</ion-col>
+									</ion-row>
+								</ion-grid>
+							</ion-card-content>
+						</ion-card>
+					</ion-col>
+				</ion-row>
+			</ion-grid>
+		</ion-card-content>
+	</ion-card>
+</ion-content>

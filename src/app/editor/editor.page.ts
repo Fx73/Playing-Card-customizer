@@ -87,7 +87,12 @@ export class EditorPage {
     this.saveService.updateDeck(this.deck)
   }
   makePublic(isPublic: boolean) {
-    this.saveService.addDescriptorToPublic(this.deckDescriptor, isPublic)
+    if (!isPublic)
+      this.saveService.removeDescriptorFromublic(this.deckDescriptor)
+    else
+      this.archiverService.createDeckArchive(this.cardBackPreview, this.cardPreviews, this.cardTrumpPreviews).then(blob => {
+        this.saveService.addDescriptorToPublic(this.deckDescriptor, blob)
+      })
   }
 
   exportDeck() {

@@ -1,3 +1,5 @@
+import * as JSZip from 'jszip';
+
 import { CardColor } from "../shared/DTO/deckDTO";
 import { Injectable } from "@angular/core";
 import { downloadZip } from 'client-zip';
@@ -45,5 +47,53 @@ export class ArchiverService {
     const blob = new Blob([int8Array], { type: 'image/png' });
     return blob;
   }
+
+
+  async extractCardPreviewsFromArchive(archiveBlob: Blob): Promise<{ backCard: string, cardPreviews: { [color in CardColor]: { [number: string]: string } }, trumpPreviews: { [number: string]: string } }> {
+    const deck: { backCard: string, cardPreviews: { [color in CardColor]: { [number: string]: string } }, trumpPreviews: { [number: string]: string } } =
+    {
+      cardPreviews: {
+        [CardColor.Spade]: {},
+        [CardColor.Heart]: {},
+        [CardColor.Diamond]: {},
+        [CardColor.Club]: {},
+      }, backCard: ""
+      , trumpPreviews: {}
+    }
+
+
+    const zip = new JSZip();
+
+    try {
+      const zipData = await zip.loadAsync(archiveBlob);
+      const fileNames = Object.keys(zipData.files);
+
+      for (const fileName of fileNames) {
+        if (fileName === "backCard.png") {
+          const fileData = await zipData.file(fileName)?.async('base64');
+          deck.backCard = `data:image/png;base64,${fileData}`
+        } else {
+          const filePathSegments = fileName.split('/');
+          const color = filePathSegments[0];
+          const number = filePathSegments[1].split('.')[0];
+          const fileData = await zipData.file(fileName)?.async('base64');
+
+          if (color === 'Trump') {
+            deck.trumpPreviews[number] = `data:image/png;base64,${fileData}`;
+          } else {
+            if (color && number && fileData) {
+              deck.cardPreviews[color as CardColor][number] = `data:image/png;base64,${fileData}`;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting card previews from archive:', error);
+    }
+
+    return deck;
+  }
+
+
 
 }

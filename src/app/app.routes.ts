@@ -1,4 +1,5 @@
 import { EditorGuard } from './editor/editor.guard';
+import { EditorViewerPage } from './editor-viewer/editor-viewer.page';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -24,5 +25,9 @@ export const routes: Routes = [
   {
     path: 'browse',
     loadComponent: () => import('./browse/browse.page').then((m) => m.BrowsePage),
+  },
+  {
+    path: 'view/:id',
+    loadComponent: () => import('./editor-viewer/editor-viewer.page').then((m) => m.EditorViewerPage),
   },
 ];

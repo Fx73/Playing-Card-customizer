@@ -158,16 +158,20 @@ export class SaveService {
 
   //#endregion
 
-  async addDescriptorToPublic(descriptor: DeckDescriptorDTO, isPublic: boolean): Promise<void> {
-    if (isPublic) {
-      const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter);
-      await setDoc(docRef, descriptor);
+  async addDescriptorToPublic(descriptor: DeckDescriptorDTO, archiveData: Blob): Promise<void> {
+    const storageRef = ref(getStorage(), `Public/${descriptor.id}.zip`)
+    const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter)
 
-    } else {
-      const docRef = doc(this.db, 'public', descriptor.id);
-      await deleteDoc(docRef);
-    }
+    await setDoc(docRef, descriptor)
+    await uploadBytes(storageRef, archiveData)
+  }
 
+  async removeDescriptorFromublic(descriptor: DeckDescriptorDTO): Promise<void> {
+    const storageRef = ref(getStorage(), `Public/${descriptor.id}.zip`)
+    const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter)
+
+    await deleteDoc(docRef)
+    await deleteObject(storageRef)
   }
 
   generateRandomId(length: number): string {

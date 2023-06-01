@@ -30,7 +30,7 @@ export class BrowsePage {
 
 
   loadDeck(dto: DeckDescriptorDTO) {
-    this.router.navigateByUrl('/editor/' + dto.id);
+    this.router.navigateByUrl('/view/' + dto.id);
   }
 
   onSearch(event: any) {
