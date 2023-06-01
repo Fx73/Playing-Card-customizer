@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseDeckValues, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
 
+import { AppComponent } from '../app.component';
 import { ArchiverService } from './../services/archiver.service';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CommonModule } from '@angular/common';
@@ -85,14 +86,20 @@ export class EditorPage {
 
   saveDeck() {
     this.saveService.updateDeck(this.deck)
+    if (this.deck.isPublic)
+      this.deck.isPublic = false;
   }
   makePublic(isPublic: boolean) {
     if (!isPublic)
       this.saveService.removeDescriptorFromublic(this.deckDescriptor)
-    else
+    else {
+      AppComponent.presentOkToast("Be aware that the public version will stay as it is now. Any update will not be shown unless turned to public again.")
       this.archiverService.createDeckArchive(this.cardBackPreview, this.cardPreviews, this.cardTrumpPreviews).then(blob => {
         this.saveService.addDescriptorToPublic(this.deckDescriptor, blob)
       })
+    }
+
+
   }
 
   exportDeck() {
@@ -109,6 +116,8 @@ export class EditorPage {
   //#region Refresh
   refreshDescriptor() {
     this.saveService.updateDescriptor(this.deckDescriptor)
+    if (this.deck.isPublic)
+      this.saveService.updateDescriptorPublic(this.deckDescriptor)
   }
 
   refreshAllPreviews() {

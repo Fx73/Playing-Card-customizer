@@ -45,8 +45,10 @@ export class EditorViewerPage {
   constructor(private route: ActivatedRoute, private router: Router, private browseService: BrowseService, private archiverService: ArchiverService) {
     const id = this.route.snapshot.paramMap.get('id')!
     this.browseService.getDescriptorById(id).then(d => {
-      if (d)
+      if (d) {
+        this.cardBackPreview = d.icon
         this.deckDescriptor = d
+      }
       else
         this.router.navigate(['/home']);
     })
@@ -55,7 +57,6 @@ export class EditorViewerPage {
       if (zip) {
         archiverService.extractCardPreviewsFromArchive(zip).then(p => {
           this.cardPreviews = p.cardPreviews
-          this.cardBackPreview = p.backCard
           if (Object.keys(p.trumpPreviews).length > 0) {
             this.cardTrumpPreviews = p.trumpPreviews
             this.deckFormat = DeckFormat.Tarot

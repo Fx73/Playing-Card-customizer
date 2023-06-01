@@ -72,6 +72,33 @@ export class SaveService {
     }
   }
 
+  //Public part
+  async addDescriptorToPublic(descriptor: DeckDescriptorDTO, archiveData: Blob): Promise<void> {
+    const storageRef = ref(getStorage(), `Public/${descriptor.id}.zip`)
+    const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter)
+
+    await setDoc(docRef, descriptor)
+    await uploadBytes(storageRef, archiveData)
+  }
+
+  async removeDescriptorFromublic(descriptor: DeckDescriptorDTO): Promise<void> {
+    const storageRef = ref(getStorage(), `Public/${descriptor.id}.zip`)
+    const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter)
+
+    await deleteDoc(docRef)
+    await deleteObject(storageRef)
+  }
+
+  async updateDescriptorPublic(dto: DeckDescriptorDTO) {
+    if (!UserComponent.user) return;
+    try {
+      const docRef = doc(this.db, 'public', dto.id).withConverter(deckDescriptorConverter)
+      await setDoc(docRef, dto, { merge: true });
+    } catch (e) {
+      console.error('Error updating descriptor: ', e);
+    }
+  }
+
   //#endregion
 
   //#region Deck
@@ -157,22 +184,6 @@ export class SaveService {
   }
 
   //#endregion
-
-  async addDescriptorToPublic(descriptor: DeckDescriptorDTO, archiveData: Blob): Promise<void> {
-    const storageRef = ref(getStorage(), `Public/${descriptor.id}.zip`)
-    const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter)
-
-    await setDoc(docRef, descriptor)
-    await uploadBytes(storageRef, archiveData)
-  }
-
-  async removeDescriptorFromublic(descriptor: DeckDescriptorDTO): Promise<void> {
-    const storageRef = ref(getStorage(), `Public/${descriptor.id}.zip`)
-    const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter)
-
-    await deleteDoc(docRef)
-    await deleteObject(storageRef)
-  }
 
   generateRandomId(length: number): string {
     const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

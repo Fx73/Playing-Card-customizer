@@ -27,7 +27,7 @@ export class AppComponent {
   async presentOkToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
-      duration: 3000,
+      duration: 6000,
       color: 'success'
     });
     toast.present();
@@ -36,7 +36,7 @@ export class AppComponent {
   async presentWarningToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
-      duration: 3000,
+      duration: 6000,
       color: 'warning'
     });
     toast.present();
