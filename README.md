@@ -7,17 +7,18 @@
 [![DeepScan grade](https://deepscan.io/api/teams/17167/projects/24743/branches/764344/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=17167&pid=24743&bid=764344)
 [![Website](https://img.shields.io/website?down_message=down&up_message=playing-card-customizer.web.app&url=https%3A%2F%2Fplaying-card-customizer.web.app)](http://playing-card-customizer.web.app)
 
-[<img src="./src/assets/Icon.png" alt="icon" width="200" height="200" align="left">](#)
+[<img src="./src/assets/ScreenShot1.png" alt="icon" align="right">](#)
 ## Summary
 The objective of this website is to permit the easy construction of a playing card deck.
-<br><br><br><br><br>
+Everything is saved in database, so you will need an account to start creating.
 
 
-
-## What you can do   
-   *   Customize precisely the design of your playing cards
+## What you can do  
+ - Freely
+   *   Browse, view & download the publics creations
+ - With an account
+   *   Customize from various deck format
    *   Add your own images, fonts, and graphics
-   *   Choose from various card formats
    *   Preview your custom deck online
 
 ## How to use
