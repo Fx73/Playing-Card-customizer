@@ -1,13 +1,13 @@
 .main-title {
-  font-size: 8vh; /* 10% de la hauteur de l'écran */
-  height: 12vh; /* 20% de la hauteur de l'écran */
+  font-size: 5em;
+  height: max(14vh,1em);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .logoImg{
-  margin: 2vh;
-  height:8vh;
+  margin: 1vw;
+  height:max(12vh,5em);
   cursor: pointer;
 }
