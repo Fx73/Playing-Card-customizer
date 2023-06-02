@@ -18,7 +18,7 @@
 			<ion-button [routerLink]="['/editor']"
 				[disabled]="!isUserLoggedIn()"
 				expand="block"
-				class="start-button home-content home-content-bgimg2">
+				class="start-button home-content {{isUserLoggedIn()? 'home-content-bgimg1':'home-content-bgimg2' }}">
 				Customize now !
 			</ion-button>
 		</ion-card-content>

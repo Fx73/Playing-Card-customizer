@@ -410,6 +410,9 @@ export class EditorPage implements AfterContentInit {
         }
         ctx.rotate(-Math.PI);
 
+        // Appliquer le masque
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.drawImage(backgroundImg, 0, 0);
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
@@ -511,7 +514,6 @@ export class EditorPage implements AfterContentInit {
         //Border
         if (this.deck.drawBorderTrump) ctx.drawImage(borderImg, 0, 0)
 
-
         if (number !== 'E') {
           if (this.deck.drawBorderTrumpNumber) ctx.drawImage(borderTrumpImg, 0, 0)
           if (this.deck.drawBorderTrumpNumber2) ctx.drawImage(borderTrump2Img, 0, 0)
@@ -526,6 +528,10 @@ export class EditorPage implements AfterContentInit {
           ctx.drawImage(colorSymbolImg, xIconPlacement - backgroundImg.width, yIconPlacement - backgroundImg.height);
           ctx.fillText(number, xTextPlacement - canvas.width, yTextPlacement - canvas.height)
           ctx.rotate(-Math.PI);
+
+          // Appliquer le masque
+          ctx.globalCompositeOperation = 'destination-in';
+          ctx.drawImage(backgroundImg, 0, 0);
         }
 
 
@@ -564,9 +570,13 @@ export class EditorPage implements AfterContentInit {
           centerImg.crossOrigin = "anonymous"
         });
 
+        //Milieu
         ctx.drawImage(backgroundImg, 0, 0)
         ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
 
+        // Appliquer le masque
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.drawImage(backgroundImg, 0, 0);
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
