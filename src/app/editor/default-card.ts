@@ -19,6 +19,28 @@ export class DefaultCard {
     this.yGapFt = 5 * this.yGap / 8;
   }
 
+
+  drawDefaultPattern(number: string, colorSymbolImg: HTMLImageElement, ctx: CanvasRenderingContext2D) {
+    const canvasCenterX = (this.canvasWidth - colorSymbolImg.width) / 2;
+    const canvasCenterY = (this.canvasHeight - colorSymbolImg.height) / 2;
+
+    if (number == 'A' || number == 'J' || number == 'Q' || number == 'K' || number == 'Kn') {
+      ctx.drawImage(colorSymbolImg, (this.canvasWidth - (colorSymbolImg.width * 2)) / 2, (this.canvasHeight - (colorSymbolImg.height * 2)) / 2, colorSymbolImg.width * 2, colorSymbolImg.width * 2);
+    } else {
+      for (const position of this.getPositions(canvasCenterX, canvasCenterY)[number]) {
+        ctx.drawImage(colorSymbolImg, position.x, position.y);
+      }
+    }
+  }
+
+  drawDefaultPatternTrump(number: string, ctx: CanvasRenderingContext2D) {
+    ctx.font = '320px basteleur'
+    ctx.textAlign = 'center'
+
+    ctx.fillText(number, this.canvasWidth / 2, this.canvasHeight / 2)
+  }
+
+
   getDefaultPattern(color: CardColor, number: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const localcanvas = document.createElement('canvas');

@@ -1,11 +1,11 @@
 import { ActivatedRoute, Router } from '@angular/router';
+import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
 import { BaseDeckValues, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
 
 import { AppComponent } from '../app.component';
 import { ArchiverService } from './../services/archiver.service';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { DeckDescriptorDTO } from '../shared/DTO/deckDescriptorDTO';
 import { DefaultCard } from './default-card';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +21,7 @@ import { UserComponent } from '../shared/user/user.component';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, UserComponent, HeaderComponent, ColorPickerModule,]
 })
-export class EditorPage {
+export class EditorPage implements AfterContentInit {
   readonly deckFormats = Object.values(DeckFormat)
   readonly cardColors: CardColor[] = Object.values(CardColor)
   readonly cardNumbers: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
@@ -50,38 +50,46 @@ export class EditorPage {
   cardBackPreview: string = ""
 
   constructor(private route: ActivatedRoute, private router: Router, private saveService: SaveService, private archiverService: ArchiverService) {
-    const id = this.route.snapshot.paramMap.get('id')!
-    if (id == 'new') {
-      this.deck = new DeckDTO(saveService.generateRandomId(8))
-      this.deckDescriptor = new DeckDescriptorDTO(this.deck.id)
-      if (UserComponent.user!.displayName)
-        this.deckDescriptor.creator = UserComponent.user!.displayName
-
-      window.history.replaceState({}, 'Deck Editor', 'editor/' + this.deck.id);
-
-      this.saveService.addDescriptor(this.deckDescriptor)
-      this.saveService.addDeck(this.deck)
-      this.refreshAllPreviews()
-    } else {
-      saveService.getDescriptorById(id).then(value => {
-        this.deckDescriptor = value!
-        if (this.deckDescriptor.creator !== UserComponent.user!.displayName && UserComponent.user!.displayName)
-          this.deckDescriptor.creator = UserComponent.user!.displayName
-      })
-      saveService.getDeckById(id).then(value => {
-        if (value) {
-          this.deck = value
-          this.refreshAllPreviews()
-        } else {
-          this.router.navigate(['/editor']);
-        }
-      })
-    }
-
     this.input = document.createElement('input')
     this.input.type = 'file';
     this.input.accept = 'image/png, image/jpeg';
+  }
 
+  ngAfterContentInit(): void {
+    const id = this.route.snapshot.paramMap.get('id')!
+    if (id == 'new') {
+      this.newDeck()
+      window.history.replaceState({}, 'Deck Editor', 'editor/' + this.deck.id);
+    } else {
+      this.loadDeck(id)
+    }
+  }
+
+  newDeck() {
+    this.deck = new DeckDTO(this.saveService.generateRandomId(12))
+    this.deckDescriptor = new DeckDescriptorDTO(this.deck.id)
+    if (UserComponent.user!.displayName)
+      this.deckDescriptor.creator = UserComponent.user!.displayName
+
+    this.saveService.addDescriptor(this.deckDescriptor)
+    this.saveService.addDeck(this.deck)
+    this.refreshAllPreviews()
+  }
+
+  loadDeck(id: string) {
+    this.saveService.getDescriptorById(id).then(value => {
+      this.deckDescriptor = value!
+      if (this.deckDescriptor.creator !== UserComponent.user!.displayName && UserComponent.user!.displayName)
+        this.deckDescriptor.creator = UserComponent.user!.displayName
+    })
+    this.saveService.getDeckById(id).then(value => {
+      if (value) {
+        this.deck = value
+        this.refreshAllPreviews()
+      } else {
+        this.router.navigate(['/editor']);
+      }
+    })
   }
 
   saveDeck() {
@@ -89,6 +97,7 @@ export class EditorPage {
     if (this.deck.isPublic)
       this.deck.isPublic = false;
   }
+
   makePublic(isPublic: boolean) {
     if (!isPublic)
       this.saveService.removeDescriptorFromublic(this.deckDescriptor)
@@ -112,6 +121,7 @@ export class EditorPage {
     })
 
   }
+
 
   //#region Refresh
   refreshDescriptor() {
@@ -305,20 +315,9 @@ export class EditorPage {
       }
 
       const backgroundImg = new Image();
-      backgroundImg.src = 'assets/Standard/layout' + this.deck.format + '.png'
-
       const borderImg = new Image();
-      borderImg.src = 'assets/Standard/border' + this.deck.format + '.png'
-
       const colorSymbolImg = new Image();
-      colorSymbolImg.src = this.deck.iconImages[color]
-      colorSymbolImg.crossOrigin = "anonymous"
-
       const centerImg = new Image();
-      if (this.deck.images[color][number]) {
-        centerImg.src = this.deck.images[color][number]
-        centerImg.crossOrigin = "anonymous"
-      }
 
       backgroundImg.onload = async () => {
         canvas.width = backgroundImg.width
@@ -328,18 +327,23 @@ export class EditorPage {
           borderImg.onload = () => {
             resolve();
           };
+          borderImg.src = 'assets/Standard/border' + this.deck.format + '.png'
+
           colorSymbolImg.onload = () => {
             resolve();
           };
-        });
-        await new Promise<void>((resolve) => {
-          if (!centerImg.src) {
-            new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPattern(color, number).then(val => centerImg.src = val)
-          }
+          colorSymbolImg.crossOrigin = "anonymous"
+          colorSymbolImg.src = this.deck.iconImages[color]
+
           centerImg.onload = () => {
             resolve();
           };
+          if (this.deck.images[color][number]) {
+            centerImg.src = this.deck.images[color][number]
+            centerImg.crossOrigin = "anonymous"
+          }
         });
+
 
         //Properties
         this.generateFontCSS(color)
@@ -393,12 +397,16 @@ export class EditorPage {
         ctx.rotate(-Math.PI);
 
         //Milieu
-        ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
+        if (this.deck.images[color][number])
+          ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
+        else
+          new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPattern(number, colorSymbolImg, ctx)
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
       };
 
+      backgroundImg.src = 'assets/Standard/layout' + this.deck.format + '.png'
     });
   }
 
@@ -413,29 +421,12 @@ export class EditorPage {
       }
 
       const backgroundImg = new Image();
-      backgroundImg.src = 'assets/Standard/layoutTarot.png'
-
       const borderImg = new Image();
-      borderImg.src = 'assets/Standard/borderTarot.png'
-
       const borderTrumpImg = new Image();
-      borderTrumpImg.src = 'assets/Standard/borderTarotTrump.png'
-
       const borderTrump2Img = new Image();
-      borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png'
-
       const borderTrumpAdditionalImg = new Image();
-      borderTrumpAdditionalImg.src = 'assets/Standard/borderTarotTrumpAdditional.png'
-
-      const colorSymbolImg = new Image(); { }
-      colorSymbolImg.src = this.deck.iconImagesTrump
-      colorSymbolImg.crossOrigin = "anonymous"
-
+      const colorSymbolImg = new Image();
       const centerImg = new Image();
-      if (this.deck.imagesTrump[number]) {
-        centerImg.src = this.deck.imagesTrump[number]
-        centerImg.crossOrigin = "anonymous"
-      }
 
       backgroundImg.onload = async () => {
         canvas.width = backgroundImg.width
@@ -445,26 +436,38 @@ export class EditorPage {
           borderImg.onload = () => {
             resolve();
           };
+          borderImg.src = 'assets/Standard/borderTarot.png'
+
           borderTrumpImg.onload = () => {
             resolve();
           };
+          borderTrumpImg.src = 'assets/Standard/borderTarotTrump.png'
+
           borderTrump2Img.onload = () => {
             resolve();
           };
+          borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png'
+
           borderTrumpAdditionalImg.onload = () => {
             resolve();
           };
+          borderTrumpAdditionalImg.src = 'assets/Standard/borderTarotTrumpAdditional.png'
+
           colorSymbolImg.onload = () => {
             resolve();
           };
-        });
-        await new Promise<void>((resolve) => {
-          if (!centerImg.src) {
-            new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPatternTrump(number).then(val => centerImg.src = val)
-          }
+          colorSymbolImg.crossOrigin = "anonymous"
+          colorSymbolImg.src = this.deck.iconImagesTrump
+
           centerImg.onload = () => {
             resolve();
           };
+          if (this.deck.imagesTrump[number]) {
+            centerImg.crossOrigin = "anonymous"
+            centerImg.src = this.deck.imagesTrump[number]
+          } else {
+            new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPatternTrump(number).then(val => centerImg.src = val)
+          }
         });
 
         //Properties
@@ -496,13 +499,15 @@ export class EditorPage {
         }
 
         //Milieu
-        ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
-
+        if (this.deck.imagesTrump[number])
+          ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
+        else
+          new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPatternTrump(number, ctx)
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
       };
-
+      backgroundImg.src = 'assets/Standard/layoutTarot.png'
     });
   }
 
@@ -520,8 +525,7 @@ export class EditorPage {
       backgroundImg.src = 'assets/Standard/layout' + this.deck.format + '.png'
 
       const centerImg = new Image();
-      centerImg.src = this.deckDescriptor.icon
-      centerImg.crossOrigin = "anonymous"
+
 
 
       backgroundImg.onload = async () => {
@@ -532,6 +536,8 @@ export class EditorPage {
           centerImg.onload = () => {
             resolve();
           };
+          centerImg.src = this.deckDescriptor.icon
+          centerImg.crossOrigin = "anonymous"
         });
 
         ctx.drawImage(backgroundImg, 0, 0)

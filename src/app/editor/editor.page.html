@@ -36,13 +36,6 @@
 					</ion-grid>
 				</ion-card-content>
 			</ion-card>
-			<!-- Export -->
-			<ion-card>
-				<ion-button (click)="exportDeck()"
-					expand="block">
-					Export Deck
-				</ion-button>
-			</ion-card>
 		</ion-col>
 		<ion-col>
 			<!-- PROPRIETES DE BASE -->
@@ -69,6 +62,12 @@
 								</ion-select-option>
 							</ion-select>
 						</ion-item>
+						<ion-item class="color-grey">
+							<ion-label>Card Size</ion-label>
+							<ion-label slot="end">
+								{{deck.format === deckFormats[0] ? '750px / 1050px' : '720px / 1344px'}}
+							</ion-label>
+						</ion-item>
 						<ion-item>
 							<ion-label position="stacked">Black Card Color</ion-label>
 							<input [(colorPicker)]="deck.blackCardColor"
@@ -83,6 +82,13 @@
 						</ion-item>
 					</ion-list>
 				</ion-card-content>
+			</ion-card>
+			<!-- Export -->
+			<ion-card>
+				<ion-button (click)="exportDeck()"
+					expand="block">
+					Export Deck
+				</ion-button>
 			</ion-card>
 		</ion-col>
 	</ion-row>
