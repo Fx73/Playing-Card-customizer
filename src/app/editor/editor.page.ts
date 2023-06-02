@@ -323,26 +323,32 @@ export class EditorPage implements AfterContentInit {
         canvas.width = backgroundImg.width
         canvas.height = backgroundImg.height
 
-        await new Promise<void>((resolve) => {
-          borderImg.onload = () => {
-            resolve();
-          };
-          borderImg.src = 'assets/Standard/border' + this.deck.format + '.png'
-
-          colorSymbolImg.onload = () => {
-            resolve();
-          };
-          colorSymbolImg.crossOrigin = "anonymous"
-          colorSymbolImg.src = this.deck.iconImages[color]
-
-          centerImg.onload = () => {
-            resolve();
-          };
-          if (this.deck.images[color][number]) {
-            centerImg.src = this.deck.images[color][number]
-            centerImg.crossOrigin = "anonymous"
-          }
-        });
+        await Promise.all([
+          new Promise<void>((resolve) => {
+            borderImg.onload = () => {
+              resolve();
+            };
+            borderImg.src = 'assets/Standard/border' + this.deck.format + '.png';
+          }),
+          new Promise<void>((resolve) => {
+            colorSymbolImg.onload = () => {
+              resolve();
+            };
+            colorSymbolImg.crossOrigin = "anonymous";
+            colorSymbolImg.src = this.deck.iconImages[color];
+          }),
+          new Promise<void>((resolve) => {
+            centerImg.onload = () => {
+              resolve();
+            };
+            if (this.deck.images[color][number]) {
+              centerImg.src = this.deck.images[color][number];
+              centerImg.crossOrigin = "anonymous"
+            } else {
+              resolve();
+            }
+          })
+        ]);
 
 
         //Properties
@@ -360,6 +366,14 @@ export class EditorPage implements AfterContentInit {
         //Fond
         ctx.drawImage(backgroundImg, 0, 0)
         if (this.deck.drawBorder[color]) ctx.drawImage(borderImg, 0, 0)
+
+
+        //Milieu
+        if (this.deck.images[color][number])
+          ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
+        else
+          new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPattern(number, colorSymbolImg, ctx)
+
 
         //D'un coté
         ctx.drawImage(colorSymbolImg, xIconPlacement, yIconPlacement, iconWidth, iconHeigth)
@@ -396,11 +410,6 @@ export class EditorPage implements AfterContentInit {
         }
         ctx.rotate(-Math.PI);
 
-        //Milieu
-        if (this.deck.images[color][number])
-          ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
-        else
-          new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPattern(number, colorSymbolImg, ctx)
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
@@ -432,43 +441,54 @@ export class EditorPage implements AfterContentInit {
         canvas.width = backgroundImg.width
         canvas.height = backgroundImg.height
 
-        await new Promise<void>((resolve) => {
-          borderImg.onload = () => {
-            resolve();
-          };
-          borderImg.src = 'assets/Standard/borderTarot.png'
+        await Promise.all([
+          new Promise<void>((resolve) => {
+            borderImg.onload = () => {
+              resolve();
+            };
+            borderImg.src = 'assets/Standard/borderTarot.png';
+          }),
+          new Promise<void>((resolve) => {
+            borderTrumpImg.onload = () => {
+              resolve();
+            };
+            borderTrumpImg.src = 'assets/Standard/borderTarotTrump.png';
+          }),
+          new Promise<void>((resolve) => {
+            borderTrump2Img.onload = () => {
+              resolve();
+            };
+            borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png';
+          }),
+          new Promise<void>((resolve) => {
+            borderTrumpAdditionalImg.onload = () => {
+              resolve();
+            };
+            borderTrumpAdditionalImg.src = 'assets/Standard/borderTarotTrumpAdditional.png';
+          }),
+          new Promise<void>((resolve) => {
+            colorSymbolImg.onload = () => {
+              resolve();
+            };
+            colorSymbolImg.crossOrigin = 'anonymous';
+            colorSymbolImg.src = this.deck.iconImagesTrump;
+          }),
+          new Promise<void>((resolve) => {
+            centerImg.onload = () => {
+              resolve();
+            };
+            if (this.deck.imagesTrump[number]) {
+              centerImg.crossOrigin = 'anonymous';
+              centerImg.src = this.deck.imagesTrump[number];
+            } else {
+              new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPatternTrump(number).then(val => {
+                centerImg.src = val;
+                resolve();
+              });
+            }
+          })
+        ]);
 
-          borderTrumpImg.onload = () => {
-            resolve();
-          };
-          borderTrumpImg.src = 'assets/Standard/borderTarotTrump.png'
-
-          borderTrump2Img.onload = () => {
-            resolve();
-          };
-          borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png'
-
-          borderTrumpAdditionalImg.onload = () => {
-            resolve();
-          };
-          borderTrumpAdditionalImg.src = 'assets/Standard/borderTarotTrumpAdditional.png'
-
-          colorSymbolImg.onload = () => {
-            resolve();
-          };
-          colorSymbolImg.crossOrigin = "anonymous"
-          colorSymbolImg.src = this.deck.iconImagesTrump
-
-          centerImg.onload = () => {
-            resolve();
-          };
-          if (this.deck.imagesTrump[number]) {
-            centerImg.crossOrigin = "anonymous"
-            centerImg.src = this.deck.imagesTrump[number]
-          } else {
-            new DefaultCard(backgroundImg.width, backgroundImg.height).getDefaultPatternTrump(number).then(val => centerImg.src = val)
-          }
-        });
 
         //Properties
         this.generateFontCSS(null)
@@ -481,7 +501,17 @@ export class EditorPage implements AfterContentInit {
 
         //Fond
         ctx.drawImage(backgroundImg, 0, 0)
+
+        //Milieu
+        if (this.deck.imagesTrump[number])
+          ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
+        else
+          new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPatternTrump(number, ctx)
+
+        //Border
         if (this.deck.drawBorderTrump) ctx.drawImage(borderImg, 0, 0)
+
+
         if (number !== 'E') {
           if (this.deck.drawBorderTrumpNumber) ctx.drawImage(borderTrumpImg, 0, 0)
           if (this.deck.drawBorderTrumpNumber2) ctx.drawImage(borderTrump2Img, 0, 0)
@@ -498,11 +528,7 @@ export class EditorPage implements AfterContentInit {
           ctx.rotate(-Math.PI);
         }
 
-        //Milieu
-        if (this.deck.imagesTrump[number])
-          ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
-        else
-          new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPatternTrump(number, ctx)
+
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
@@ -525,8 +551,6 @@ export class EditorPage implements AfterContentInit {
       backgroundImg.src = 'assets/Standard/layout' + this.deck.format + '.png'
 
       const centerImg = new Image();
-
-
 
       backgroundImg.onload = async () => {
         canvas.width = backgroundImg.width
