@@ -1,6 +1,7 @@
 import * as JSZip from 'jszip';
 
-import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib'
+import { ClassicMesures, DefaultMesures, TarotMesures } from '../editor/default-card';
+import { PDFDocument, PDFPage, StandardFonts, rgb, scale } from 'pdf-lib'
 
 import { CardColor } from "../shared/DTO/deckDTO";
 import { Injectable } from "@angular/core";
@@ -111,6 +112,9 @@ export class ArchiverService {
 
     const { width, height } = backimage;
 
+    const mesures: DefaultMesures = (width === new ClassicMesures().FullWidth ? new ClassicMesures() : new TarotMesures())
+
+
     let page: PDFPage
 
     for (const color of Object.values(CardColor)) {
@@ -120,9 +124,12 @@ export class ArchiverService {
 
         page = pdfDoc.addPage([width, height]);
         page.drawImage(image);
+        page.setBleedBox(mesures.cropX, mesures.cropY, mesures.Width, mesures.Height)
 
         page = pdfDoc.addPage([width, height]);
         page.drawImage(backimage);
+        page.setBleedBox(mesures.cropX, mesures.cropY, mesures.Width, mesures.Height)
+
       }
     }
 

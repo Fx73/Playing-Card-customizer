@@ -1,5 +1,41 @@
 import { CardColor } from "../shared/DTO/deckDTO";
 
+export interface DefaultMesures {
+  readonly Width: number
+  readonly Height: number
+  readonly FullWidth: number
+  readonly FullHeight: number
+
+  readonly cropX: number
+  readonly cropY: number
+  readonly cropWidth: number
+  readonly cropHeight: number
+}
+
+export class ClassicMesures implements DefaultMesures {
+  readonly Width = 732
+  readonly Height = 1039
+  readonly FullWidth = 803
+  readonly FullHeight = 1110
+
+  readonly cropX = (this.FullWidth - this.Width) / 2
+  readonly cropY = (this.FullHeight - this.Height) / 2
+  readonly cropWidth = this.Width + (this.FullWidth - this.Width) / 2
+  readonly cropHeight = this.Height + (this.FullHeight - this.Height) / 2
+}
+
+export class TarotMesures implements DefaultMesures {
+  readonly Width = 709
+  readonly Height = 1335
+  readonly FullWidth = 780
+  readonly FullHeight = 1406
+
+  readonly cropX = (this.FullWidth - this.Width) / 2
+  readonly cropY = (this.FullHeight - this.Height) / 2
+  readonly cropWidth = this.Width + (this.FullWidth - this.Width) / 2
+  readonly cropHeight = this.Height + (this.FullHeight - this.Height) / 2
+}
+
 export class DefaultCard {
   canvasWidth: number
   canvasHeight: number

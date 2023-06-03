@@ -1,5 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardColor, DeckFormat } from '../shared/DTO/deckDTO';
+import { ClassicMesures, TarotMesures } from '../editor/default-card';
 
 import { ArchiverService } from '../services/archiver.service';
 import { BrowseService } from '../services/browse.service';
@@ -60,6 +61,7 @@ export class EditorViewerPage {
           if (Object.keys(p.trumpPreviews).length > 0) {
             this.cardTrumpPreviews = p.trumpPreviews
             this.deckFormat = DeckFormat.Tarot
+            this.cardBackPreview = p.backCard
           }
         })
       }
@@ -79,6 +81,16 @@ export class EditorViewerPage {
       link.remove()
     })
 
+  }
+
+  exportDeckPDF() {
+    this.archiverService.createDeckPdf(this.cardBackPreview, this.cardPreviews, this.cardTrumpPreviews).then(blob => {
+      const link = document.createElement("a")
+      link.href = URL.createObjectURL(blob)
+      link.download = this.deckDescriptor.title
+      link.click()
+      link.remove()
+    })
   }
 
 

@@ -15,7 +15,7 @@ export enum CardColor {
 export class BaseDeckValues {
   static readonly colorFont = "numbers-deuce"
   static readonly trumpFont = "basteleur"
-  static readonly trumpIcon = 'assets/Standard/iconEmpty.png'
+  static readonly trumpIcon = 'assets/Standard/IconTrump.png'
   static readonly colorIcon: (color: CardColor) => string = (color: CardColor) => `assets/Standard/icon${color}.png`
 
 }
@@ -40,7 +40,6 @@ export class DeckDTO {
   drawBorderTrump: boolean = false
   drawBorderTrumpNumber: boolean = false
   drawBorderTrumpNumber2: boolean = false
-  drawBorderTrumpNumberAdditional: boolean = false
 
   images: {
     [color in CardColor]: { [number: string]: string };

@@ -1,13 +1,13 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
 import { BaseDeckValues, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
+import { ClassicMesures, DefaultCard, TarotMesures } from './default-card';
 
 import { AppComponent } from '../app.component';
 import { ArchiverService } from './../services/archiver.service';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CommonModule } from '@angular/common';
 import { DeckDescriptorDTO } from '../shared/DTO/deckDescriptorDTO';
-import { DefaultCard } from './default-card';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../shared/header/header.component";
 import { IonicModule } from '@ionic/angular';
@@ -26,6 +26,8 @@ export class EditorPage implements AfterContentInit {
   readonly cardColors: CardColor[] = Object.values(CardColor)
   readonly cardNumbers: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
   readonly trumpNumbers: string[] = Array.from({ length: 21 }, (_, i) => (i + 1).toString()).concat('E');
+  readonly mesures = { Classic: new ClassicMesures(), Tarot: new TarotMesures() }
+
   readonly colorMapping = {
     [CardColor.Spade]: () => this.deck.blackCardColor,
     [CardColor.Heart]: () => this.deck.redCardColor,
@@ -366,10 +368,10 @@ export class EditorPage implements AfterContentInit {
         ctx.textAlign = 'center'
         const iconWidth = 2 * colorSymbolImg.width / 3
         const iconHeigth = 2 * colorSymbolImg.height / 3
-        const xIconPlacement = 84 - iconWidth / 2
-        const yIconPlacement = 226 + (this.deck.format === DeckFormat.Tarot ? 20 : 0) - iconHeigth / 2
-        const xTextPlacement = 84
-        const yTextPlacement = 152
+        const xIconPlacement = 120 - iconWidth / 2
+        const yIconPlacement = 260 - iconHeigth / 2 + (this.deck.format === DeckFormat.Tarot ? 20 : 0)
+        const xTextPlacement = 120
+        const yTextPlacement = 180 + (this.deck.format === DeckFormat.Tarot ? 20 : 0)
 
         //Fond
         ctx.drawImage(backgroundImg, 0, 0)
@@ -444,7 +446,6 @@ export class EditorPage implements AfterContentInit {
       const borderImg = new Image();
       const borderTrumpImg = new Image();
       const borderTrump2Img = new Image();
-      const borderTrumpAdditionalImg = new Image();
       const colorSymbolImg = new Image();
       const centerImg = new Image();
 
@@ -472,12 +473,6 @@ export class EditorPage implements AfterContentInit {
             borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png';
           }),
           new Promise<void>((resolve) => {
-            borderTrumpAdditionalImg.onload = () => {
-              resolve();
-            };
-            borderTrumpAdditionalImg.src = 'assets/Standard/borderTarotTrumpAdditional.png';
-          }),
-          new Promise<void>((resolve) => {
             colorSymbolImg.onload = () => {
               resolve();
             };
@@ -502,13 +497,10 @@ export class EditorPage implements AfterContentInit {
 
 
         //Properties
-        this.generateFontCSS(null)
-        ctx.font = '160px ' + this.deck.iconFontTrump.name
-        ctx.textAlign = 'center'
-        const xIconPlacement = 690 - colorSymbolImg.width
-        const yIconPlacement = 140 - colorSymbolImg.height / 2
-        const xTextPlacement = 170
-        const yTextPlacement = 206
+        const xIconPlacement = 514 - colorSymbolImg.width / 2
+        const yIconPlacement = 172 - colorSymbolImg.height / 2
+        const xTextPlacement = 186
+        const yTextPlacement = 224
 
         //Fond
         ctx.drawImage(backgroundImg, 0, 0)
@@ -519,13 +511,16 @@ export class EditorPage implements AfterContentInit {
         else
           new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPatternTrump(number, ctx)
 
+        this.generateFontCSS(null)
+        ctx.font = '160px ' + this.deck.iconFontTrump.name
+        ctx.textAlign = 'center'
+
         //Border
         if (this.deck.drawBorderTrump) ctx.drawImage(borderImg, 0, 0)
 
         if (number !== 'E') {
           if (this.deck.drawBorderTrumpNumber) ctx.drawImage(borderTrumpImg, 0, 0)
           if (this.deck.drawBorderTrumpNumber2) ctx.drawImage(borderTrump2Img, 0, 0)
-          if (this.deck.drawBorderTrumpNumberAdditional) ctx.drawImage(borderTrumpAdditionalImg, 0, 0)
 
           //D'un coté
           ctx.drawImage(colorSymbolImg, xIconPlacement, yIconPlacement)
