@@ -83,15 +83,31 @@
 					</ion-list>
 				</ion-card-content>
 			</ion-card>
-			<!-- Export -->
-			<ion-card>
-				<ion-button (click)="exportDeck()"
-					expand="block">
-					Export Deck
-				</ion-button>
-			</ion-card>
 		</ion-col>
 	</ion-row>
+	<!-- Export -->
+	<ion-card>
+		<ion-accordion-group>
+			<ion-accordion>
+				<ion-item slot="header"
+					color="light">
+					<ion-label>Export</ion-label>
+				</ion-item>
+				<ion-card slot="content">
+					<ion-card-content>
+						<ion-button (click)="exportDeck()"
+							expand="block">
+							Export Deck as ZIP
+						</ion-button>
+						<ion-button (click)="exportDeckPDF()"
+							expand="block">
+							Export Deck as PDF
+						</ion-button>
+					</ion-card-content>
+				</ion-card>
+			</ion-accordion>
+		</ion-accordion-group>
+	</ion-card>
 	<!-- Colors Icon & Text -->
 	<ion-card class="icon-card">
 		<ion-accordion-group>

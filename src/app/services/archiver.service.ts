@@ -1,5 +1,7 @@
 import * as JSZip from 'jszip';
 
+import { PDFDocument, PDFPage, StandardFonts, rgb } from 'pdf-lib'
+
 import { CardColor } from "../shared/DTO/deckDTO";
 import { Injectable } from "@angular/core";
 import { downloadZip } from 'client-zip';
@@ -9,6 +11,8 @@ import { downloadZip } from 'client-zip';
 })
 export class ArchiverService {
 
+
+  //#region Zip
 
   public async createDeckArchive(backCard: string, cardPreviews: { [color in CardColor]: { [number: string]: string } }, cardTrumpPreviews: { [number: string]: string }): Promise<Blob> {
     const array = []
@@ -94,6 +98,52 @@ export class ArchiverService {
     return deck;
   }
 
+  //#endregion
 
+
+  //#region Pdf
+
+  async createDeckPdf(backCard: string, cardPreviews: { [color in CardColor]: { [number: string]: string } }, cardTrumpPreviews: { [number: string]: string }): Promise<Blob> {
+    const pdfDoc = await PDFDocument.create();
+
+    const imageBytes = await fetch(backCard).then((response) => response.arrayBuffer());
+    const backimage = await pdfDoc.embedPng(imageBytes);
+
+    const { width, height } = backimage;
+
+    let page: PDFPage
+
+    for (const color of Object.values(CardColor)) {
+      for (const [number, preview] of Object.entries(cardPreviews[color])) {
+        const imageBytes = await fetch(preview).then((response) => response.arrayBuffer());
+        const image = await pdfDoc.embedPng(imageBytes);
+
+        page = pdfDoc.addPage([width, height]);
+        page.drawImage(image);
+
+        page = pdfDoc.addPage([width, height]);
+        page.drawImage(backimage);
+      }
+    }
+
+    for (const [number, preview] of Object.entries(cardTrumpPreviews)) {
+      const imageBytes = await fetch(preview).then((response) => response.arrayBuffer());
+      const image = await pdfDoc.embedPng(imageBytes);
+
+      page = pdfDoc.addPage([width, height]);
+      page.drawImage(image);
+
+      page = pdfDoc.addPage([width, height]);
+      page.drawImage(backimage);
+    }
+
+    const pdfBytes = await pdfDoc.save();
+
+    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+    return pdfBlob;
+  }
+
+
+  //#endregion
 
 }

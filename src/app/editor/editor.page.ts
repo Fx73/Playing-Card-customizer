@@ -119,9 +119,17 @@ export class EditorPage implements AfterContentInit {
       link.click()
       link.remove()
     })
-
   }
 
+  exportDeckPDF() {
+    this.archiverService.createDeckPdf(this.cardBackPreview, this.cardPreviews, this.cardTrumpPreviews).then(blob => {
+      const link = document.createElement("a")
+      link.href = URL.createObjectURL(blob)
+      link.download = this.deckDescriptor.title
+      link.click()
+      link.remove()
+    })
+  }
 
   //#region Refresh
   refreshDescriptor() {
