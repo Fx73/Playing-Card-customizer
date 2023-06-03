@@ -133,16 +133,17 @@ export class ArchiverService {
       }
     }
 
-    for (const [number, preview] of Object.entries(cardTrumpPreviews)) {
-      const imageBytes = await fetch(preview).then((response) => response.arrayBuffer());
-      const image = await pdfDoc.embedPng(imageBytes);
+    if (width === new TarotMesures().Width)
+      for (const [number, preview] of Object.entries(cardTrumpPreviews)) {
+        const imageBytes = await fetch(preview).then((response) => response.arrayBuffer());
+        const image = await pdfDoc.embedPng(imageBytes);
 
-      page = pdfDoc.addPage([width, height]);
-      page.drawImage(image);
+        page = pdfDoc.addPage([width, height]);
+        page.drawImage(image);
 
-      page = pdfDoc.addPage([width, height]);
-      page.drawImage(backimage);
-    }
+        page = pdfDoc.addPage([width, height]);
+        page.drawImage(backimage);
+      }
 
     const pdfBytes = await pdfDoc.save();
 
