@@ -81,12 +81,19 @@ export class SaveService {
     await uploadBytes(storageRef, archiveData)
   }
 
-  async removeDescriptorFromublic(descriptor: DeckDescriptorDTO): Promise<void> {
-    const storageRef = ref(getStorage(), `Public/${descriptor.id}.zip`)
-    const docRef = doc(this.db, 'public', descriptor.id).withConverter(deckDescriptorConverter)
+  async removeFromPublic(deckId: string): Promise<void> {
+    try {
+      const docRef = doc(this.db, 'public', deckId).withConverter(deckDescriptorConverter)
+      const storageRef = ref(getStorage(), `Public/${deckId}.zip`)
 
-    await deleteDoc(docRef)
-    await deleteObject(storageRef)
+      await deleteDoc(docRef)
+      await deleteObject(storageRef)
+    } catch (e) {
+      if ((e as { code: string }).code !== 'storage/object-not-found') {
+        console.error('Error deleting deck: ', e);
+        throw e;
+      }
+    }
   }
 
   async updateDescriptorPublic(dto: DeckDescriptorDTO) {
@@ -157,12 +164,20 @@ export class SaveService {
       await deleteDoc(deckDocRef);
       await deleteDoc(descriptorDocRef);
       const storageRef = ref(getStorage(), `${UserComponent.user!.uid}/${deckId}`);
-      await deleteObject(storageRef);
-    } catch (e) {
-      if ((e as { code: string }).code !== 'storage/object-not-found') {
-        console.error('Error deleting deck: ', e);
-        throw e;
+      try {
+        await deleteObject(storageRef);
       }
+      catch (e) {
+        if ((e as { code: string }).code !== 'storage/object-not-found') {
+          console.error('Error deleting deck: ', e);
+          throw e;
+        }
+      }
+      this.removeFromPublic(deckId)
+    } catch (e) {
+      console.error('Error deleting deck: ', e);
+      throw e;
+
     }
   }
 

@@ -102,7 +102,7 @@ export class EditorPage implements AfterContentInit {
 
   makePublic(isPublic: boolean) {
     if (!isPublic)
-      this.saveService.removeDescriptorFromublic(this.deckDescriptor)
+      this.saveService.removeFromPublic(this.deckDescriptor.id)
     else {
       AppComponent.presentOkToast("Be aware that the public version will stay as it is now. Any update will not be shown unless turned to public again.")
       this.archiverService.createDeckArchive(this.cardBackPreview, this.cardPreviews, this.cardTrumpPreviews).then(blob => {
