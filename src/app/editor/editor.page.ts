@@ -206,6 +206,7 @@ export class EditorPage implements AfterContentInit {
         this.deckDescriptor.icon = imgUrl;
         this.createBackCard().then(img => this.cardBackPreview = img)
         this.saveService.updateDescriptor(this.deckDescriptor)
+        this.input.value = '';
       });
     };
     this.input.click();
@@ -217,6 +218,7 @@ export class EditorPage implements AfterContentInit {
         this.deck.iconImages[color] = imgUrl;
         this.saveService.updateDeck(this.deck)
         this.refreshPreviewsOfColour(color);
+        this.input.value = '';
       });
     };
     this.input.click();
@@ -227,6 +229,7 @@ export class EditorPage implements AfterContentInit {
         this.deck.iconImagesTrump = imgUrl;
         this.saveService.updateDeck(this.deck)
         this.refreshPreviewsOfColourTrump();
+        this.input.value = '';
       });
     };
     this.input.click();
@@ -238,6 +241,7 @@ export class EditorPage implements AfterContentInit {
         this.deck.images[color][number] = imgUrl;
         this.saveService.updateDeck(this.deck)
         this.refreshPreview(color, number);
+        this.input.value = '';
       });
     };
     this.input.click();
@@ -248,6 +252,7 @@ export class EditorPage implements AfterContentInit {
       this.pickImageFromInput('card' + 'Trump' + number, (imgUrl) => {
         this.deck.imagesTrump[number] = imgUrl;
         this.saveService.updateDeck(this.deck)
+        this.input.value = '';
       });
     };
     this.input.click();
