@@ -35,6 +35,7 @@ export class EditorPage implements AfterContentInit {
     [CardColor.Club]: () => this.deck.blackCardColor,
   };
   readonly input: HTMLInputElement;
+  progressbar = false
 
 
   deck: DeckDTO = new DeckDTO('')
@@ -123,13 +124,37 @@ export class EditorPage implements AfterContentInit {
     })
   }
 
-  exportDeckPDF() {
-    this.archiverService.createDeckPdf(this.cardBackPreview, this.cardPreviews, this.cardTrumpPreviews).then(blob => {
+  async exportDeckPDF() {
+    this.progressbar = true
+
+    let cardPreviews: {
+      [color in CardColor]: { [number: string]: string };
+    } = {
+      [CardColor.Spade]: {},
+      [CardColor.Heart]: {},
+      [CardColor.Diamond]: {},
+      [CardColor.Club]: {},
+    }
+    let cardTrumpPreviews: { [number: string]: string } = {}
+
+    let cardBackPreview: string = await this.createBackCard(false)
+
+    for (const color of Object.values(CardColor))
+      for (const number of this.cardNumbers)
+        cardPreviews[color][number] = await this.createFinalImage(color, number, false)
+
+    if (this.deck.format === DeckFormat.Tarot)
+      for (const number of this.trumpNumbers)
+        cardTrumpPreviews[number] = await this.createFinalTrumpImage(number, false)
+
+
+    this.archiverService.createDeckPdf(cardBackPreview, cardPreviews, cardTrumpPreviews).then(blob => {
       const link = document.createElement("a")
       link.href = URL.createObjectURL(blob)
       link.download = this.deckDescriptor.title
       link.click()
       link.remove()
+      this.progressbar = false
     })
   }
 
@@ -320,7 +345,7 @@ export class EditorPage implements AfterContentInit {
   }
   //#endregion
 
-  createFinalImage(color: CardColor, number: string): Promise<string> {
+  createFinalImage(color: CardColor, number: string, withMask = true): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -379,8 +404,10 @@ export class EditorPage implements AfterContentInit {
         const yTextPlacement = 180 + (this.deck.format === DeckFormat.Tarot ? 20 : 0)
 
         //Fond
-        ctx.drawImage(backgroundImg, 0, 0)
-        if (this.deck.drawBorder[color]) ctx.drawImage(borderImg, 0, 0)
+        if (withMask)
+          ctx.drawImage(backgroundImg, 0, 0)
+        if (this.deck.drawBorder[color])
+          ctx.drawImage(borderImg, 0, 0)
 
 
         //Milieu
@@ -426,19 +453,20 @@ export class EditorPage implements AfterContentInit {
         ctx.rotate(-Math.PI);
 
         // Appliquer le masque
-        ctx.globalCompositeOperation = 'destination-in';
-        ctx.drawImage(backgroundImg, 0, 0);
+        if (withMask) {
+          ctx.globalCompositeOperation = 'destination-in';
+          ctx.drawImage(backgroundImg, 0, 0);
+        }
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
       };
-
-      backgroundImg.src = 'assets/Standard/layout' + this.deck.format + '.png'
+      backgroundImg.src = withMask ? 'assets/Standard/layout' + this.deck.format + '.png' : 'assets/Standard/blank' + this.deck.format + '.png'
     });
   }
 
 
-  createFinalTrumpImage(number: string): Promise<string> {
+  createFinalTrumpImage(number: string, withMask = true): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -510,6 +538,7 @@ export class EditorPage implements AfterContentInit {
         //Fond
         ctx.drawImage(backgroundImg, 0, 0)
 
+
         //Milieu
         if (this.deck.imagesTrump[number])
           ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
@@ -538,8 +567,10 @@ export class EditorPage implements AfterContentInit {
           ctx.rotate(-Math.PI);
 
           // Appliquer le masque
-          ctx.globalCompositeOperation = 'destination-in';
-          ctx.drawImage(backgroundImg, 0, 0);
+          if (withMask) {
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.drawImage(backgroundImg, 0, 0);
+          }
         }
 
 
@@ -547,12 +578,12 @@ export class EditorPage implements AfterContentInit {
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
       };
-      backgroundImg.src = 'assets/Standard/layoutTarot.png'
+      backgroundImg.src = withMask ? 'assets/Standard/layoutTarot.png' : 'assets/Standard/blankTarot.png'
     });
   }
 
 
-  createBackCard(): Promise<string> {
+  createBackCard(withMask = true): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -583,8 +614,10 @@ export class EditorPage implements AfterContentInit {
         ctx.drawImage(centerImg, canvas.width / 2 - centerImg.width / 2, canvas.height / 2 - centerImg.height / 2);
 
         // Appliquer le masque
-        ctx.globalCompositeOperation = 'destination-in';
-        ctx.drawImage(backgroundImg, 0, 0);
+        if (withMask) {
+          ctx.globalCompositeOperation = 'destination-in';
+          ctx.drawImage(backgroundImg, 0, 0);
+        }
 
         const finalImage = canvas.toDataURL('image/png');
         resolve(finalImage);
