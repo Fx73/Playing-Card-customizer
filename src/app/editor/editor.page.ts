@@ -231,7 +231,7 @@ export class EditorPage implements AfterContentInit {
         this.deckDescriptor.icon = imgUrl;
         this.createBackCard().then(img => this.cardBackPreview = img)
         this.saveService.updateDescriptor(this.deckDescriptor)
-        this.input.value = '';
+        this.input.value = ''
       });
     };
     this.input.click();
@@ -240,10 +240,10 @@ export class EditorPage implements AfterContentInit {
   pickIconImage(color: CardColor) {
     this.input.onchange = (_) => {
       this.pickImageFromInput('icon' + color, (imgUrl) => {
-        this.deck.iconImages[color] = imgUrl;
+        this.deck.iconImages[color] = imgUrl
         this.saveService.updateDeck(this.deck)
-        this.refreshPreviewsOfColour(color);
-        this.input.value = '';
+        this.refreshPreviewsOfColour(color)
+        this.input.value = ''
       });
     };
     this.input.click();
@@ -253,8 +253,8 @@ export class EditorPage implements AfterContentInit {
       this.pickImageFromInput('iconTrump', (imgUrl) => {
         this.deck.iconImagesTrump = imgUrl;
         this.saveService.updateDeck(this.deck)
-        this.refreshPreviewsOfColourTrump();
-        this.input.value = '';
+        this.refreshPreviewsOfColourTrump()
+        this.input.value = ''
       });
     };
     this.input.click();
@@ -263,10 +263,10 @@ export class EditorPage implements AfterContentInit {
   pickImage(color: CardColor, number: string) {
     this.input.onchange = (_) => {
       this.pickImageFromInput('card' + color + number, (imgUrl) => {
-        this.deck.images[color][number] = imgUrl;
+        this.deck.images[color][number] = imgUrl
         this.saveService.updateDeck(this.deck)
-        this.refreshPreview(color, number);
-        this.input.value = '';
+        this.refreshPreview(color, number)
+        this.input.value = ''
       });
     };
     this.input.click();
@@ -275,9 +275,10 @@ export class EditorPage implements AfterContentInit {
   pickTrumpImage(number: string) {
     this.input.onchange = (_) => {
       this.pickImageFromInput('card' + 'Trump' + number, (imgUrl) => {
-        this.deck.imagesTrump[number] = imgUrl;
+        this.deck.imagesTrump[number] = imgUrl
         this.saveService.updateDeck(this.deck)
-        this.input.value = '';
+        this.refreshPreviewTrump(number)
+        this.input.value = ''
       });
     };
     this.input.click();
