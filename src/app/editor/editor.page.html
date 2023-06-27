@@ -184,18 +184,24 @@
 								</ion-toggle>
 							</ion-item>
 							<ion-item>
-								<ion-toggle [(ngModel)]="deck.drawBorderTrumpNumber"
-									[enableOnOffLabels]="true"
-									(ionChange)="refreshPreviewsOfColourTrump();saveDeck()">
-									Draw borders of number
-								</ion-toggle>
+								<ion-select [(ngModel)]="deck.drawBorderTrumpNumber"
+									(ionChange)="refreshPreviewsOfColourTrump(); saveDeck()"
+									label="Numbers border">
+									<ion-select-option *ngFor="let border of borderFill"
+										[value]="border">
+										{{ border }}
+									</ion-select-option>
+								</ion-select>
 							</ion-item>
 							<ion-item>
-								<ion-toggle [(ngModel)]="deck.drawBorderTrumpNumber2"
-									[enableOnOffLabels]="true"
-									(ionChange)="refreshPreviewsOfColourTrump();saveDeck()">
-									Draw borders after number
-								</ion-toggle>
+								<ion-select [(ngModel)]="deck.drawBorderTrumpNumber2"
+									(ionChange)="refreshPreviewsOfColourTrump(); saveDeck()"
+									label="Additional border">
+									<ion-select-option *ngFor="let border of borderFill"
+										[value]="border">
+										{{ border }}
+									</ion-select-option>
+								</ion-select>
 							</ion-item>
 							<ion-item>
 								<ion-thumbnail>

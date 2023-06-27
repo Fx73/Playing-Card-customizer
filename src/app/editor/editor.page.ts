@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
-import { BaseDeckValues, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
+import { BaseDeckValues, BorderFill, CardColor, DeckDTO, DeckFormat } from '../shared/DTO/deckDTO';
 import { ClassicMesures, DefaultCard, TarotMesures } from './default-card';
 
 import { AppComponent } from '../app.component';
@@ -23,6 +23,7 @@ import { UserComponent } from '../shared/user/user.component';
 })
 export class EditorPage implements AfterContentInit {
   readonly deckFormats = Object.values(DeckFormat)
+  readonly borderFill = Object.values(BorderFill)
   readonly cardColors: CardColor[] = Object.values(CardColor)
   readonly cardNumbers: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
   readonly trumpNumbers: string[] = Array.from({ length: 21 }, (_, i) => (i + 1).toString()).concat('E');
@@ -498,13 +499,23 @@ export class EditorPage implements AfterContentInit {
             borderTrumpImg.onload = () => {
               resolve();
             };
-            borderTrumpImg.src = 'assets/Standard/borderTarotTrump.png';
+            if (this.deck.drawBorderTrumpNumber === BorderFill.filled)
+              borderTrumpImg.src = 'assets/Standard/borderFilledTarotTrump.png';
+            else if (this.deck.drawBorderTrumpNumber === BorderFill.outline)
+              borderTrumpImg.src = 'assets/Standard/borderTarotTrump.png';
+            else
+              borderTrumpImg.src = 'assets/Standard/empty.png';
           }),
           new Promise<void>((resolve) => {
             borderTrump2Img.onload = () => {
               resolve();
             };
-            borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png';
+            if (this.deck.drawBorderTrumpNumber2 === BorderFill.filled)
+              borderTrump2Img.src = 'assets/Standard/borderFilledTarotTrump2.png';
+            else if (this.deck.drawBorderTrumpNumber2 === BorderFill.outline)
+              borderTrump2Img.src = 'assets/Standard/borderTarotTrump2.png';
+            else
+              borderTrump2Img.src = 'assets/Standard/empty.png';
           }),
           new Promise<void>((resolve) => {
             colorSymbolImg.onload = () => {
@@ -554,8 +565,8 @@ export class EditorPage implements AfterContentInit {
         if (this.deck.drawBorderTrump) ctx.drawImage(borderImg, 0, 0)
 
         if (number !== 'E') {
-          if (this.deck.drawBorderTrumpNumber) ctx.drawImage(borderTrumpImg, 0, 0)
-          if (this.deck.drawBorderTrumpNumber2) ctx.drawImage(borderTrump2Img, 0, 0)
+          ctx.drawImage(borderTrumpImg, 0, 0)
+          ctx.drawImage(borderTrump2Img, 0, 0)
 
           //D'un coté
           ctx.drawImage(colorSymbolImg, xIconPlacement, yIconPlacement)

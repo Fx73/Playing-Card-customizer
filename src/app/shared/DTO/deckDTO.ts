@@ -12,6 +12,12 @@ export enum CardColor {
   Club = 'Club',
 }
 
+export enum BorderFill {
+  none = 'none',
+  outline = 'outline',
+  filled = 'filled'
+}
+
 export class BaseDeckValues {
   static readonly colorFont = "numbers-deuce"
   static readonly trumpFont = "basteleur"
@@ -38,8 +44,8 @@ export class DeckDTO {
 
 
   drawBorderTrump: boolean = false
-  drawBorderTrumpNumber: boolean = false
-  drawBorderTrumpNumber2: boolean = false
+  drawBorderTrumpNumber: BorderFill = BorderFill.none
+  drawBorderTrumpNumber2: BorderFill = BorderFill.none
 
   images: {
     [color in CardColor]: { [number: string]: string };
