@@ -71,9 +71,16 @@ export class EditorPage implements AfterContentInit {
     if (!this.deck.iconFont.Heart.yAdjust) this.deck.iconFont.Heart.yAdjust = 0
     if (!this.deck.iconFont.Spade.yAdjust) this.deck.iconFont.Spade.yAdjust = 0
 
+    if (!this.deck.iconFont.Club.size) this.deck.iconFont.Club.size = 160
+    if (!this.deck.iconFont.Diamond.size) this.deck.iconFont.Diamond.size = 160
+    if (!this.deck.iconFont.Heart.size) this.deck.iconFont.Heart.size = 160
+    if (!this.deck.iconFont.Spade.size) this.deck.iconFont.Spade.size = 160
+
+    if (!this.deck.iconFontTrump.yAdjust) this.deck.iconFontTrump.yAdjust = 0
+    if (!this.deck.iconFontTrump.size) this.deck.iconFontTrump.size = 160
+
     if (needToUpdate)
       this.saveService.updateDeck(this.deck)
-
   }
 
   ngAfterContentInit(): void {
@@ -162,9 +169,14 @@ export class EditorPage implements AfterContentInit {
       for (const number of this.cardNumbers)
         cardPreviews[color][number] = await this.createFinalImage(color, number, false)
 
-    if (this.deck.format === DeckFormat.Tarot)
+    if (this.deck.format === DeckFormat.Tarot) {
       for (const number of this.trumpNumbers)
         cardTrumpPreviews[number] = await this.createFinalTrumpImage(number, false)
+      for (const color of Object.values(CardColor))
+        cardPreviews[color]['Kn'] = await this.createFinalImage(color, 'Kn', false)
+
+    }
+
 
 
     this.archiverService.createDeckPdf(cardBackPreview, cardPreviews, cardTrumpPreviews).then(blob => {
@@ -415,7 +427,7 @@ export class EditorPage implements AfterContentInit {
 
         //Properties
         this.generateFontCSS(color)
-        ctx.font = '160px ' + this.deck.iconFont[color].name
+        ctx.font = this.deck.iconFont[color].size + 'px ' + this.deck.iconFont[color].name
         ctx.fillStyle = this.colorMapping[color]()
         ctx.textAlign = 'center'
         const iconWidth = 2 * colorSymbolImg.width / 3
@@ -567,7 +579,7 @@ export class EditorPage implements AfterContentInit {
         const xIconPlacement = 514 - colorSymbolImg.width / 2
         const yIconPlacement = 172 - colorSymbolImg.height / 2
         const xTextPlacement = 186
-        const yTextPlacement = 224
+        const yTextPlacement = 224 + this.deck.iconFontTrump.yAdjust
 
         //Fond
         ctx.drawImage(backgroundImg, 0, 0)
@@ -580,7 +592,7 @@ export class EditorPage implements AfterContentInit {
           new DefaultCard(backgroundImg.width, backgroundImg.height).drawDefaultPatternTrump(number, ctx)
 
         this.generateFontCSS(null)
-        ctx.font = '160px ' + this.deck.iconFontTrump.name
+        ctx.font = this.deck.iconFontTrump.size + 'px ' + this.deck.iconFontTrump.name
         ctx.textAlign = 'center'
 
         //Border

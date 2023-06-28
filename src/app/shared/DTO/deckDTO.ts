@@ -70,15 +70,15 @@ export class DeckDTO {
   iconImagesTrump: string = BaseDeckValues.trumpIcon
 
   iconFont: {
-    [color in CardColor]: { name: string; path: string; yAdjust: number };
+    [color in CardColor]: { name: string; path: string; size : number ;  yAdjust: number };
   } = {
-      [CardColor.Spade]: { name: BaseDeckValues.colorFont, path: "", yAdjust: 0 },
-      [CardColor.Heart]: { name: BaseDeckValues.colorFont, path: "", yAdjust: 0 },
-      [CardColor.Diamond]: { name: BaseDeckValues.colorFont, path: "", yAdjust: 0 },
-      [CardColor.Club]: { name: BaseDeckValues.colorFont, path: "", yAdjust: 0 },
+      [CardColor.Spade]: { name: BaseDeckValues.colorFont, path: "", size : 160, yAdjust: 0 },
+      [CardColor.Heart]: { name: BaseDeckValues.colorFont, path: "", size : 160, yAdjust: 0 },
+      [CardColor.Diamond]: { name: BaseDeckValues.colorFont, path: "", size : 160, yAdjust: 0 },
+      [CardColor.Club]: { name: BaseDeckValues.colorFont, path: "", size : 160, yAdjust: 0 },
     }
 
-  iconFontTrump: { name: string; path: string, yAdjust: number } = { name: BaseDeckValues.trumpFont, path: "", yAdjust: 0 }
+  iconFontTrump: { name: string; path: string, size : number,  yAdjust: number } = { name: BaseDeckValues.trumpFont, path: "", size : 160, yAdjust: 0 }
 
   isPublic = false;
   constructor(id: string) {

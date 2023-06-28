@@ -170,7 +170,16 @@
 								</ion-button>
 							</ion-item>
 							<ion-item>
-								<ion-input [(ngModel)]="deck.iconFont"
+								<ion-input [(ngModel)]="deck.iconFont[color].size"
+									(ionChange)="refreshPreviewsOfColour(color)"
+									label="Font Size"
+									slot="end"
+									type="number"
+									placeholder="160">
+								</ion-input>
+							</ion-item>
+							<ion-item>
+								<ion-input [(ngModel)]="deck.iconFont[color].yAdjust"
 									(ionChange)="refreshPreviewsOfColour(color)"
 									label="Font Y adjustment"
 									slot="end"
@@ -241,6 +250,24 @@
 										slot="icon-only"
 										name="trash"></ion-icon>
 								</ion-button>
+							</ion-item>
+							<ion-item>
+								<ion-input [(ngModel)]="deck.iconFontTrump.size"
+									(ionChange)="refreshPreviewsOfColourTrump()"
+									label="Font Size"
+									slot="end"
+									type="number"
+									placeholder="160">
+								</ion-input>
+							</ion-item>
+							<ion-item>
+								<ion-input [(ngModel)]="deck.iconFontTrump.yAdjust"
+									(ionChange)="refreshPreviewsOfColourTrump()"
+									label="Font Y adjustment"
+									slot="end"
+									type="number"
+									placeholder="0">
+								</ion-input>
 							</ion-item>
 						</ion-card-content>
 					</ion-card>
