@@ -317,6 +317,7 @@ export class EditorPage implements AfterContentInit {
             this.deck.iconFont[color].name = file.name.split('.').slice(0, -1).join('.')
             this.deck.iconFont[color].path = url
             this.saveService.updateDeck(this.deck)
+            this.refreshPreviewsOfColour(color)
           }
         }
         )
@@ -336,6 +337,7 @@ export class EditorPage implements AfterContentInit {
             this.deck.iconFontTrump.name = file.name.split('.').slice(0, -1).join('.')
             this.deck.iconFontTrump.path = url
             this.saveService.updateDeck(this.deck)
+            this.refreshPreviewsOfColourTrump()
           }
         }
         )
