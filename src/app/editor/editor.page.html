@@ -169,6 +169,15 @@
 										name="trash"></ion-icon>
 								</ion-button>
 							</ion-item>
+							<ion-item>
+								<ion-input [(ngModel)]="deck.iconFont"
+									(ionChange)="refreshPreviewsOfColour(color)"
+									label="Font Y adjustment"
+									slot="end"
+									type="number"
+									placeholder="0">
+								</ion-input>
+							</ion-item>
 						</ion-card-content>
 					</ion-card>
 					<ion-card size="6">

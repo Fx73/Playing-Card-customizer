@@ -13,6 +13,7 @@ import { HeaderComponent } from "../shared/header/header.component";
 import { IonicModule } from '@ionic/angular';
 import { SaveService } from '../services/save.service';
 import { UserComponent } from '../shared/user/user.component';
+import { forEach } from 'jszip';
 
 @Component({
   selector: 'app-editor',
@@ -59,6 +60,22 @@ export class EditorPage implements AfterContentInit {
     this.input.accept = 'image/png, image/jpeg';
   }
 
+
+  dataMigration() {
+    let needToUpdate = false;
+    if (!this.deck.iconFont.Club.yAdjust)
+      needToUpdate = true;
+
+    if (!this.deck.iconFont.Club.yAdjust) this.deck.iconFont.Club.yAdjust = 0
+    if (!this.deck.iconFont.Diamond.yAdjust) this.deck.iconFont.Diamond.yAdjust = 0
+    if (!this.deck.iconFont.Heart.yAdjust) this.deck.iconFont.Heart.yAdjust = 0
+    if (!this.deck.iconFont.Spade.yAdjust) this.deck.iconFont.Spade.yAdjust = 0
+
+    if (needToUpdate)
+      this.saveService.updateDeck(this.deck)
+
+  }
+
   ngAfterContentInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!
     if (id == 'new') {
@@ -89,6 +106,7 @@ export class EditorPage implements AfterContentInit {
     this.saveService.getDeckById(id).then(value => {
       if (value) {
         this.deck = value
+        this.dataMigration()
         this.refreshAllPreviews()
       } else {
         this.router.navigate(['/editor']);
@@ -403,7 +421,9 @@ export class EditorPage implements AfterContentInit {
         const xIconPlacement = 120 - iconWidth / 2
         const yIconPlacement = 260 - iconHeigth / 2 + (this.deck.format === DeckFormat.Tarot ? 20 : 0)
         const xTextPlacement = 120
-        const yTextPlacement = 180 + (this.deck.format === DeckFormat.Tarot ? 20 : 0)
+        const yTextPlacement = 180 + (this.deck.format === DeckFormat.Tarot ? 20 : 0) + this.deck.iconFont[color].yAdjust
+
+
 
         //Fond
         if (withMask)
