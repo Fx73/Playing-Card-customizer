@@ -110,10 +110,16 @@ export class ArchiverService {
     const imageBytes = await fetch(backCard).then((response) => response.arrayBuffer());
     const backimage = await pdfDoc.embedPng(imageBytes);
 
-    const { width, height } = backimage;
+    let { width, height } = backimage;
+    width *= 72 / 300
+    height *= 72 / 300
 
-    const mesures: DefaultMesures = (width === new ClassicMesures().FullWidth ? new ClassicMesures() : new TarotMesures())
-
+    const mesures: DefaultMesures = (width === new ClassicMesures().Width ? new ClassicMesures() : new TarotMesures())
+    const cropX = mesures.cropX * 72 / 300
+    const cropY = mesures.cropY * 72 / 300
+    const cropWidth = mesures.cropWidth * 72 / 300
+    const cropHeight = mesures.cropHeight * 72 / 300
+    console.log(mesures.cropWidth)
 
     let page: PDFPage
 
@@ -123,12 +129,13 @@ export class ArchiverService {
         const image = await pdfDoc.embedPng(imageBytes);
 
         page = pdfDoc.addPage([width, height]);
-        page.drawImage(image);
-        page.setBleedBox(mesures.cropX, mesures.cropY, mesures.Width, mesures.Height)
+        page.drawImage(image, { width: width, height: height });
+        page.setBleedBox(cropX, cropY, cropWidth, cropHeight)
 
         page = pdfDoc.addPage([width, height]);
-        page.drawImage(backimage);
-        page.setBleedBox(mesures.cropX, mesures.cropY, mesures.Width, mesures.Height)
+        page.drawImage(backimage, { width: width, height: height });
+        page.setBleedBox(cropX, cropY, cropWidth, cropHeight)
+
 
       }
     }
