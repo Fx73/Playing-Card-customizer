@@ -119,7 +119,6 @@ export class ArchiverService {
     const cropY = mesures.cropY * 72 / 300
     const cropWidth = mesures.cropWidth * 72 / 300
     const cropHeight = mesures.cropHeight * 72 / 300
-    console.log(mesures.cropWidth)
 
     let page: PDFPage
 
