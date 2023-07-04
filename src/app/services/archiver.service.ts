@@ -144,10 +144,13 @@ export class ArchiverService {
       const image = await pdfDoc.embedPng(imageBytes);
 
       page = pdfDoc.addPage([width, height]);
-      page.drawImage(image);
+      page.drawImage(image, { width: width, height: height });
+      page.setBleedBox(cropX, cropY, cropWidth, cropHeight)
 
       page = pdfDoc.addPage([width, height]);
-      page.drawImage(backimage);
+      page.drawImage(backimage, { width: width, height: height });
+      page.setBleedBox(cropX, cropY, cropWidth, cropHeight)
+
     }
 
     const pdfBytes = await pdfDoc.save();
